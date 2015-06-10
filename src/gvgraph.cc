@@ -219,7 +219,7 @@ namespace hpp {
     QList<GVEdge> GVGraph::edges() const
     {
       QList<GVEdge> list;
-      qreal dpi=_agget(_graph, "dpi", "96,0").toDouble();
+      qreal dpi = interpertDouble.toDouble(_agget(_graph, "dpi", "96,0"));
 
       for(QMap<QPair<QString, QString>, Agedge_t*>::const_iterator it=_edges.begin();
           it!=_edges.end();++it)

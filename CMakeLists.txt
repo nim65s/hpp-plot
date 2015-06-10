@@ -45,6 +45,7 @@ ENDIF()
 SET (${PROJECT_NAME}_HEADERS
   include/hpp/plot/qcustomplot.h
   include/hpp/plot/histogram-widget.hh
+  include/hpp/plot/graph-widget.hh
   )
 SET (${PROJECT_NAME}_HEADERS_NOMOC
   include/hpp/plot/gvgraph.h
@@ -67,6 +68,7 @@ SET (${PROJECT_NAME}_SOURCES
   src/qcustomplot.cpp
   src/histogram-widget.cc
   src/gvgraph.cc
+  src/graph-widget.cc
   )
 
 ADD_LIBRARY (${PROJECT_NAME}

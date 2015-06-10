@@ -15,10 +15,13 @@
 // hpp-plot. If not, see <http://www.gnu.org/licenses/>.
 
 #include "hpp/plot/gvgraph.h"
+#include "hpp/plot/graph-widget.hh"
 
 #include <QDebug>
+#include <QApplication>
+#include <QMainWindow>
 
-int main (int, char**) {
+int test_0 () {
   using hpp::plot::GVGraph;
   GVGraph graph ("test");
 
@@ -32,4 +35,28 @@ int main (int, char**) {
   foreach (hpp::plot::GVNode n, graph.nodes ()) {
       qDebug() << n.name << ", " << n.centerPos << ", " << n.height << ", " << n.width;
     }
+  return EXIT_SUCCESS;
+}
+
+int test_1 (int argc, char** argv)
+{
+  using namespace hpp::plot;
+  QApplication a(argc, argv);
+  QMainWindow window;
+
+  GraphWidget w ("test");
+  w.graph_.addNode ("n1");
+  w.graph_.addNode ("n2");
+  w.graph_.addEdge ("n1", "n2");
+  w.graph_.setRootNode ("n1");
+  w.updateGraph();
+
+  window.setCentralWidget(&w);
+  window.show();
+  return a.exec();
+}
+
+int main (int argc, char** argv) {
+//  return test_0();
+  return test_1(argc, argv);
 }
