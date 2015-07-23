@@ -17,7 +17,7 @@
 # <http://www.gnu.org/licenses/>.
 
 SET (${PROJECT_NAME}_SOURCES_TEST
-  main.cc
+  test.cc
   )
 
 ADD_EXECUTABLE(${PROJECT_NAME}-test
