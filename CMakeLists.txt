@@ -30,11 +30,11 @@ SET(PROJECT_VERSION "0")
 SETUP_PROJECT()
 
 FIND_PACKAGE(Qt4 REQUIRED QtCore QtGui)
-ADD_REQUIRED_DEPENDENCY(libgraph)
-ADD_REQUIRED_DEPENDENCY(libgvc)
 ADD_REQUIRED_DEPENDENCY("hpp-manipulation-corba")
 
-#FIND_PACKAGE("X11")
+SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_modules )
+FIND_PACKAGE("QGV")
+INCLUDE_DIRECTORIES(${QGV_INCLUDE_DIR})
 
 # Activate hpp-util logging if requested
 SET (HPP_DEBUG FALSE CACHE BOOL "trigger hpp-util debug output")
@@ -46,9 +46,9 @@ SET (${PROJECT_NAME}_HEADERS
   include/hpp/plot/qcustomplot.h
   include/hpp/plot/histogram-widget.hh
   include/hpp/plot/graph-widget.hh
+  include/hpp/plot/hpp-manipulation-graph.h
   )
 SET (${PROJECT_NAME}_HEADERS_NOMOC
-  include/hpp/plot/gvgraph.h
 )
 
 SET(${PROJECT_NAME}_FORMS
@@ -67,8 +67,8 @@ ADD_DEFINITIONS(${QT_DEFINITIONS})
 SET (${PROJECT_NAME}_SOURCES
   src/qcustomplot.cpp
   src/histogram-widget.cc
-  src/gvgraph.cc
   src/graph-widget.cc
+  src/hpp-manipulation-graph.cc
   )
 
 ADD_LIBRARY (${PROJECT_NAME}
@@ -80,9 +80,7 @@ ADD_LIBRARY (${PROJECT_NAME}
   ${${PROJECT_NAME}_RESOURCES_RCC}
   )
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${QT_LIBRARIES})
-PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} libgraph)
-PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} libgvc)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${QT_LIBRARIES} "QGVCore")
 PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} hpp-manipulation-corba)
 
 INSTALL(TARGETS ${PROJECT_NAME} DESTINATION lib)

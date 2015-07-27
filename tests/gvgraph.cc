@@ -14,29 +14,11 @@
 // received a copy of the GNU Lesser General Public License along with
 // hpp-plot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "hpp/plot/gvgraph.h"
-#include "hpp/plot/graph-widget.hh"
+#include "hpp/plot/hpp-manipulation-graph.h"
 
 #include <QDebug>
 #include <QApplication>
 #include <QMainWindow>
-
-int test_0 () {
-  using hpp::plot::GVGraph;
-  GVGraph graph ("test");
-
-  graph.addNode ("n1");
-  graph.addNode ("n2");
-  graph.addEdge ("n1", "n2");
-  graph.setRootNode ("n1");
-
-  graph.applyLayout ();
-  qDebug() << graph.boundingRect ();
-  foreach (hpp::plot::GVNode n, graph.nodes ()) {
-      qDebug() << n.name << ", " << n.centerPos << ", " << n.height << ", " << n.width;
-    }
-  return EXIT_SUCCESS;
-}
 
 int test_1 (int argc, char** argv)
 {
@@ -44,12 +26,9 @@ int test_1 (int argc, char** argv)
   QApplication a(argc, argv);
   QMainWindow window;
 
-  GraphWidget w ("test");
-  w.graph_.addNode ("n1");
-  w.graph_.addNode ("n2");
-  w.graph_.addEdge ("n1", "n2");
-  w.graph_.setRootNode ("n1");
-  w.updateGraph();
+  hpp::plot::HppManipulationGraphWidget w (NULL);
+  w.initializeGraph();
+  w.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   window.setCentralWidget(&w);
   window.show();
