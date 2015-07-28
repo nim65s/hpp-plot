@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QLabel>
 
 #include <QGVScene.h>
 
@@ -24,17 +25,21 @@ namespace hpp {
       void updateGraph ();
       void updateEdges ();
 
-    private slots:
-      void nodeContextMenu(QGVNode* node);
-      void nodeDoubleClick(QGVNode* node);
-      void wheelEvent(QWheelEvent* event);
+    protected slots:
+      virtual void nodeContextMenu(QGVNode* node);
+      virtual void nodeDoubleClick(QGVNode* node);
+      virtual void edgeContextMenu(QGVEdge* edge);
+      virtual void edgeDoubleClick(QGVEdge* edge);
+      virtual void wheelEvent(QWheelEvent* event);
 
     protected:
       virtual void fillScene ();
       QGVScene* scene_;
+      QWidget* buttonBox_;
+      QLabel* elmtInfo_;
+      QLabel* loggingInfo_;
 
     private:
-      QWidget* buttonBox_;
       QGraphicsView* view_;
     };
   }

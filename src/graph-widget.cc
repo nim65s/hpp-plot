@@ -3,7 +3,6 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <QMessageBox>
 #include <QMenu>
 #include <QWheelEvent>
 #include <QGraphicsSceneDragDropEvent>
@@ -22,20 +21,34 @@ namespace hpp {
       : QWidget (parent),
         scene_ (new QGVScene(name, this)),
         buttonBox_ (new QWidget (this)),
+        elmtInfo_ (new QLabel (this)),
+        loggingInfo_ (new QLabel (this)),
         view_ (new QGraphicsView (this))
     {
       view_->setScene(scene_);
-      QVBoxLayout* vl = new QVBoxLayout (this);
-      vl->addWidget(buttonBox_);
-      vl->addWidget(view_);
-      vl->setMargin(0);
-      this->setLayout(vl);
+      QGridLayout* gl = new QGridLayout (this);
+      this->setLayout(gl);
+//      QVBoxLayout* vl = new QVBoxLayout (this);
+      gl->addWidget(buttonBox_,   0, 0, 1, 2);
+      gl->addWidget(view_,        1, 1, 2, 1);
+      gl->addWidget(elmtInfo_,    1, 0, 1, 1);
+      gl->addWidget(loggingInfo_, 2, 0, 1, 1);
+//      gl->setMargin(0);
       view_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
       view_->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+      view_->setRenderHint(QPainter::Antialiasing);
+      view_->setRenderHint(QPainter::TextAntialiasing);
 
+      elmtInfo_->setWordWrap (true);
+      elmtInfo_->setText ("No info");
+      loggingInfo_->setText ("No info");
+      elmtInfo_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+      loggingInfo_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
       connect(scene_, SIGNAL(nodeContextMenu(QGVNode*)), SLOT(nodeContextMenu(QGVNode*)));
       connect(scene_, SIGNAL(nodeDoubleClick(QGVNode*)), SLOT(nodeDoubleClick(QGVNode*)));
+      connect(scene_, SIGNAL(edgeContextMenu(QGVEdge*)), SLOT(edgeContextMenu(QGVEdge*)));
+      connect(scene_, SIGNAL(edgeDoubleClick(QGVEdge*)), SLOT(edgeDoubleClick(QGVEdge*)));
 
       QHBoxLayout* hLayout = new QHBoxLayout (buttonBox_);
       hLayout->setMargin(0);
@@ -44,7 +57,7 @@ namespace hpp {
       QPushButton* update = new QPushButton (
             QIcon::fromTheme("view-refresh"), "&Update edges", buttonBox_);
       buttonBox_->setLayout(hLayout);
-      buttonBox_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+      buttonBox_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
       hLayout->setAlignment(buttonBox_, Qt::AlignRight);
       hLayout->addSpacerItem(new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
       hLayout->addWidget(update);
@@ -55,7 +68,7 @@ namespace hpp {
       connect(scene_, SIGNAL (nodeMouseRelease(QGVNode*)), this, SLOT (updateEdges()));
     }
 
-    void hpp::plot::GraphWidget::initializeGraph()
+    void GraphWidget::initializeGraph()
     {
       scene_->clear ();
       fillScene ();
@@ -71,6 +84,8 @@ namespace hpp {
     void GraphWidget::updateGraph()
     {
       //Layout scene
+      scene_->clear();
+      fillScene();
       scene_->freeLayout ();
       scene_->applyLayout("dot");
       scene_->render("dot");
@@ -92,21 +107,22 @@ namespace hpp {
 
     void GraphWidget::nodeContextMenu(QGVNode *node)
     {
-        //Context menu exemple
-        QMenu menu(node->label());
-
-        menu.addSeparator();
-        menu.addAction(tr("Informations"));
-        menu.addAction(tr("Options"));
-
-        QAction *action = menu.exec(QCursor::pos());
-        if(action == 0)
-            return;
+      Q_UNUSED (node)
     }
 
     void GraphWidget::nodeDoubleClick(QGVNode *node)
     {
-        QMessageBox::information(this, tr("Node double clicked"), tr("Node %1").arg(node->label()));
+      Q_UNUSED (node)
+    }
+
+    void hpp::plot::GraphWidget::edgeDoubleClick(QGVEdge *edge)
+    {
+      Q_UNUSED (edge)
+    }
+
+    void hpp::plot::GraphWidget::edgeContextMenu(QGVEdge *edge)
+    {
+      Q_UNUSED (edge)
     }
 
     void GraphWidget::wheelEvent(QWheelEvent* event)

@@ -20,13 +20,17 @@
 #include <QApplication>
 #include <QMainWindow>
 
+#include <hpp/corbaserver/manipulation/client.hh>
+
 int test_1 (int argc, char** argv)
 {
   using namespace hpp::plot;
   QApplication a(argc, argv);
   QMainWindow window;
 
-  hpp::plot::HppManipulationGraphWidget w (NULL);
+  hpp::corbaServer::manipulation::Client client (0,NULL);
+  client.connect();
+  hpp::plot::HppManipulationGraphWidget w (&client, NULL);
   w.initializeGraph();
   w.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
