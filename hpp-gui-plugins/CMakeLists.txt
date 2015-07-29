@@ -17,4 +17,6 @@
 # hpp-plot  If not, see
 # <http://www.gnu.org/licenses/>.
 
-ADD_SUBDIRECTORY(hppmonitoringplugin)
+IF (HPP_GUI_FOUND)
+  ADD_SUBDIRECTORY(hppmonitoringplugin)
+ENDIF (HPP_GUI_FOUND)
