@@ -58,11 +58,16 @@ namespace hpp {
 
       void selectionChanged ();
 
+    private slots:
+      void startStopUpdateStats (bool start);
+
     private:
       corbaServer::manipulation::Client* manip_;
 
       QList <GraphAction*> nodeContextMenuActions_;
       QList <GraphAction*> edgeContextMenuActions_;
+
+      QTimer* updateStatsTimer_;
     };
   }
 }

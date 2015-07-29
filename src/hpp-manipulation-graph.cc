@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QMenu>
 #include <QPushButton>
+#include <QTimer>
 #include <QLayout>
 #include <QDebug>
 
@@ -29,13 +30,18 @@ namespace hpp {
 
     HppManipulationGraphWidget::HppManipulationGraphWidget (corbaServer::manipulation::Client* hpp_, QWidget *parent)
       : GraphWidget ("Manipulation graph", parent),
-        manip_ (hpp_)
+        manip_ (hpp_),
+        updateStatsTimer_ (new QTimer (this))
     {
       QPushButton* stats = new QPushButton (
             QIcon::fromTheme("view-refresh"), "&Statistics", buttonBox_);
+      stats->setCheckable(true);
       buttonBox_->layout()->addWidget(stats);
+      updateStatsTimer_->setInterval(1000);
+      updateStatsTimer_->setSingleShot(false);
 
-      connect (stats, SIGNAL (clicked()), SLOT (updateStatistics()));
+      connect (updateStatsTimer_, SIGNAL (timeout()), SLOT (updateStatistics()));
+      connect (stats, SIGNAL (clicked(bool)), SLOT (startStopUpdateStats(bool)));
       connect (scene_, SIGNAL (selectionChanged()), SLOT(selectionChanged()));
     }
 
@@ -43,6 +49,7 @@ namespace hpp {
     {
       qDeleteAll (nodeContextMenuActions_);
       qDeleteAll (edgeContextMenuActions_);
+      delete updateStatsTimer_;
     }
 
     void HppManipulationGraphWidget::addNodeContextMenuAction(GraphAction *action)
@@ -91,16 +98,19 @@ namespace hpp {
       // Add the nodes
       QMap < ::CORBA::Long, QGVNode*> nodes;
       for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
-          nodes[elmts->nodes[i].id] = scene_->addNode (QString (elmts->nodes[i].name));
-          nodes[elmts->nodes[i].id]->setData(IdRole, QVariant::fromValue < ::hpp::ID> (elmts->nodes[i].id));
-          nodes[elmts->nodes[i].id]->setFlag (QGraphicsItem::ItemIsMovable, true);
-          nodes[elmts->nodes[i].id]->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
+          QGVNode* n = scene_->addNode (QString (elmts->nodes[i].name));
+          n->setData(IdRole, QVariant::fromValue < ::hpp::ID> (elmts->nodes[i].id));
+          n->setData(SuccessRateRole, 0.f/0.f);
+          n->setFlag (QGraphicsItem::ItemIsMovable, true);
+          n->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
+          nodes[elmts->nodes[i].id] = n;
         }
       for (std::size_t i = 0; i < elmts->edges.length(); ++i) {
-          scene_->addEdge (nodes[elmts->edges[i].start],
+          QGVEdge* e = scene_->addEdge (nodes[elmts->edges[i].start],
               nodes[elmts->edges[i].end],
-              QString (elmts->edges[i].name))
-              ->setData(IdRole, QVariant::fromValue < ::hpp::ID> (elmts->edges[i].id));
+              QString (elmts->edges[i].name));
+          e->setData(IdRole, QVariant::fromValue < ::hpp::ID> (elmts->edges[i].id));
+          e->setData(SuccessRateRole, 0.f/0.f);
         }
       //*/
     }
@@ -113,7 +123,7 @@ namespace hpp {
           if (node) {
               manip_->graph()->getConfigProjectorStats (node->data(IdRole).value <hpp::ID>(),
                                                         config.out(), path.out());
-              float sr = (config->nbObs > 0) ? (float)config->success/(float)config->nbObs : 1.f;
+              float sr = (config->nbObs > 0) ? (float)config->success/(float)config->nbObs : 0.f / 0.f;
               node->setData(SuccessRateRole, sr);
               const QString& fillcolor = node->getAttribute("fillcolor");
               if (sr < 0.5 && !(fillcolor == "red")) {
@@ -129,7 +139,7 @@ namespace hpp {
           if (edge) {
               manip_->graph()->getConfigProjectorStats (edge->data(IdRole).value <hpp::ID>(),
                                                         config.out(), path.out());
-              float sr = (config->nbObs > 0) ? (float)config->success/(float)config->nbObs : 1.f;
+              float sr = (config->nbObs > 0) ? (float)config->success/(float)config->nbObs : 0.f / 0.f;
               edge->setData(SuccessRateRole, sr);
               const QString& color = edge->getAttribute("color");
               if (sr < 0.5 && !(color == "red")) {
@@ -200,9 +210,15 @@ namespace hpp {
             } else {
               return;
             }
-          elmtInfo_->setText (QString ("%1 %2:\nSuccess rate: %3")
+          elmtInfo_->setText (QString ("<h4>%1 %2</h4><ul><li>Success rate: %3</li></ul>")
                               .arg (type).arg (name).arg(sr));
         }
+    }
+
+    void hpp::plot::HppManipulationGraphWidget::startStopUpdateStats(bool start)
+    {
+      if (start) updateStatsTimer_->start ();
+      else       updateStatsTimer_->stop ();
     }
   }
 }
