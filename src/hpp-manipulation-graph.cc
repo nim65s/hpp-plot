@@ -125,12 +125,10 @@ namespace hpp {
                                                         config.out(), path.out());
               float sr = (config->nbObs > 0) ? (float)config->success/(float)config->nbObs : 0.f / 0.f;
               node->setData(SuccessRateRole, sr);
+              QString colorcode = (config->nbObs > 0) ? QColor (255,(int)(sr*255),(int)(sr*255)).name() : "white";
               const QString& fillcolor = node->getAttribute("fillcolor");
-              if (sr < 0.5 && !(fillcolor == "red")) {
-                  node->setAttribute("fillcolor", "red");
-                  node->updateLayout();
-                } else if (sr >= 0.5 && !(fillcolor == "white")) {
-                  node->setAttribute("fillcolor", "white");
+              if (!(fillcolor == colorcode)) {
+                  node->setAttribute("fillcolor", colorcode);
                   node->updateLayout();
                 }
               continue;
@@ -141,12 +139,10 @@ namespace hpp {
                                                         config.out(), path.out());
               float sr = (config->nbObs > 0) ? (float)config->success/(float)config->nbObs : 0.f / 0.f;
               edge->setData(SuccessRateRole, sr);
+              QString colorcode = (config->nbObs > 0) ? QColor (255 - (int)(sr*255),0,0).name() : "";
               const QString& color = edge->getAttribute("color");
-              if (sr < 0.5 && !(color == "red")) {
-                  edge->setAttribute("color", "red");
-                  edge->updateLayout();
-                } else if (sr >= 0.5 && !(color == "")) {
-                  edge->setAttribute("color", "");
+              if (!(color == colorcode)) {
+                  edge->setAttribute("color", colorcode);
                   edge->updateLayout();
                 }
               continue;
@@ -196,22 +192,26 @@ namespace hpp {
           elmtInfo_->setText ("No info");
         }
       if (items.size() == 1) {
-          QString type, name; float sr;
+          QString type, name; float sr; ::hpp::ID id;
           QGVNode* node = dynamic_cast <QGVNode*> (items.first());
           QGVEdge* edge = dynamic_cast <QGVEdge*> (items.first());
           if (node) {
               type = "Node";
               name = node->label();
-              sr = node->data(SuccessRateRole).toFloat();
             } else if (edge) {
               type = "Edge";
               name = edge->label();
-              sr = edge->data(SuccessRateRole).toFloat();
             } else {
               return;
             }
-          elmtInfo_->setText (QString ("<h4>%1 %2</h4><ul><li>Success rate: %3</li></ul>")
-                              .arg (type).arg (name).arg(sr));
+          sr = items.first()->data(SuccessRateRole).toFloat();
+          id = items.first()->data(IdRole).value < ::hpp::ID> ();
+          elmtInfo_->setText (
+            QString ("<h4>%1 %2</h4><ul>"
+              "<li>Id: %3</li>"
+              "<li>Success rate: %4</li>"
+              "</ul>")
+            .arg (type).arg (name).arg(id).arg(sr));
         }
     }
 
