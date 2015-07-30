@@ -71,6 +71,8 @@ namespace hpp {
 
       QHBoxLayout* hLayout = new QHBoxLayout (buttonBox_);
       hLayout->setMargin(0);
+      algList_ = new QComboBox (this);
+      algList_->addItems (QStringList () << "dot" << "neato" << "fdp" << "sfdp" << "twopi" << "circo" << "patchwork" << "osage");
       QPushButton* refresh = new QPushButton (
             QIcon::fromTheme("view-refresh"), "&Refresh", buttonBox_);
       QPushButton* update = new QPushButton (
@@ -79,6 +81,7 @@ namespace hpp {
       buttonBox_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
       hLayout->setAlignment(buttonBox_, Qt::AlignRight);
       hLayout->addSpacerItem(new QSpacerItem (0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+      hLayout->addWidget(algList_);
       hLayout->addWidget(update);
       hLayout->addWidget(refresh);
       connect(refresh, SIGNAL (clicked ()), this, SLOT (updateGraph()));
@@ -98,7 +101,7 @@ namespace hpp {
       if (layoutShouldBeFreed_) scene_->freeLayout ();
       scene_->clear();
       fillScene();
-      scene_->applyLayout("dot");
+      scene_->applyLayout(algList_->currentText ());
       layoutShouldBeFreed_ = true;
       scene_->render("dot");
 

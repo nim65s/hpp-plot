@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QComboBox>
 #include <QLabel>
 
 #include <QGVScene.h>
@@ -48,6 +49,7 @@ namespace hpp {
 
     private:
       GraphView* view_;
+      QComboBox* algList_;
       bool layoutShouldBeFreed_;
     };
   }
