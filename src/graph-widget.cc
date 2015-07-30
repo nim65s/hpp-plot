@@ -23,7 +23,8 @@ namespace hpp {
         buttonBox_ (new QWidget (this)),
         elmtInfo_ (new QLabel (this)),
         loggingInfo_ (new QLabel (this)),
-        view_ (new QGraphicsView (this))
+        view_ (new QGraphicsView (this)),
+        layoutShouldBeFreed_ (false)
     {
       view_->setScene(scene_);
       QGridLayout* gl = new QGridLayout (this);
@@ -68,14 +69,6 @@ namespace hpp {
       connect(scene_, SIGNAL (nodeMouseRelease(QGVNode*)), this, SLOT (updateEdges()));
     }
 
-    void GraphWidget::initializeGraph()
-    {
-      scene_->clear ();
-      fillScene ();
-      scene_->applyLayout("dot");
-      scene_->render("dot");
-    }
-
     GraphWidget::~GraphWidget()
     {
       delete scene_;
@@ -84,25 +77,24 @@ namespace hpp {
     void GraphWidget::updateGraph()
     {
       //Layout scene
+      if (layoutShouldBeFreed_) scene_->freeLayout ();
       scene_->clear();
       fillScene();
-      scene_->freeLayout ();
       scene_->applyLayout("dot");
+      layoutShouldBeFreed_ = true;
       scene_->render("dot");
 
       //Fit in view
-//      view_->fitInView(scene_->sceneRect(), Qt::KeepAspectRatio);
+      view_->fitInView(scene_->sceneRect(), Qt::KeepAspectRatio);
     }
 
     void GraphWidget::updateEdges()
     {
       //Layout scene
-      scene_->freeLayout ();
+      if (layoutShouldBeFreed_) scene_->freeLayout ();
       scene_->applyLayout("nop");
+      layoutShouldBeFreed_ = true;
       scene_->render("dot");
-
-      //Fit in view
-//      view_->fitInView(scene_->sceneRect(), Qt::KeepAspectRatio);
     }
 
     void GraphWidget::nodeContextMenu(QGVNode *node)

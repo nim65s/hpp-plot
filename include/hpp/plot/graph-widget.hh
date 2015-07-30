@@ -17,8 +17,6 @@ namespace hpp {
     public:
       GraphWidget (QString name = QString (), QWidget *parent = NULL);
 
-      void initializeGraph ();
-
       ~GraphWidget ();
 
     public slots:
@@ -41,6 +39,7 @@ namespace hpp {
 
     private:
       QGraphicsView* view_;
+      bool layoutShouldBeFreed_;
     };
   }
 }
