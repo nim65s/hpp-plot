@@ -17,13 +17,31 @@
 
 namespace hpp {
   namespace plot {
+    GraphView::GraphView(QWidget *parent)
+      : QGraphicsView (parent)
+    {
+      setTransformationAnchor (AnchorUnderMouse);
+      setDragMode (ScrollHandDrag);
+      setBackgroundBrush (QBrush (Qt::white, Qt::SolidPattern));
+    }
+
+    void GraphView::wheelEvent(QWheelEvent *event)
+    {
+      if (event->modifiers () == Qt::ControlModifier) {
+          qreal scaleFactor = qPow(2.0, event->delta() / 240.0); //How fast we zoom
+          qreal factor = transform().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
+          if(0.05 < factor && factor < 10) //Zoom factor limitation
+            scale(scaleFactor, scaleFactor);
+        }
+    }
+
     GraphWidget::GraphWidget(QString name, QWidget* parent)
       : QWidget (parent),
         scene_ (new QGVScene(name, this)),
         buttonBox_ (new QWidget (this)),
         elmtInfo_ (new QLabel (this)),
         loggingInfo_ (new QLabel (this)),
-        view_ (new QGraphicsView (this)),
+        view_ (new GraphView (this)),
         layoutShouldBeFreed_ (false)
     {
       view_->setScene(scene_);
@@ -115,14 +133,6 @@ namespace hpp {
     void hpp::plot::GraphWidget::edgeContextMenu(QGVEdge *edge)
     {
       Q_UNUSED (edge)
-    }
-
-    void GraphWidget::wheelEvent(QWheelEvent* event)
-    {
-        qreal scaleFactor = qPow(2.0, event->delta() / 240.0); //How fast we zoom
-        qreal factor = view_->transform().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
-        if(0.05 < factor && factor < 10) //Zoom factor limitation
-          view_->scale(scaleFactor, scaleFactor);
     }
 
     void GraphWidget::fillScene()

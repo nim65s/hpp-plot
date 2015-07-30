@@ -10,6 +10,16 @@
 
 namespace hpp {
   namespace plot {
+    class GraphView : public QGraphicsView
+    {
+    public:
+      GraphView (QWidget* parent = NULL);
+
+      // QWidget interface
+    protected:
+      void wheelEvent(QWheelEvent *);
+    };
+
     class GraphWidget : public QWidget
     {
       Q_OBJECT
@@ -28,7 +38,6 @@ namespace hpp {
       virtual void nodeDoubleClick(QGVNode* node);
       virtual void edgeContextMenu(QGVEdge* edge);
       virtual void edgeDoubleClick(QGVEdge* edge);
-      virtual void wheelEvent(QWheelEvent* event);
 
     protected:
       virtual void fillScene ();
@@ -38,7 +47,7 @@ namespace hpp {
       QLabel* loggingInfo_;
 
     private:
-      QGraphicsView* view_;
+      GraphView* view_;
       bool layoutShouldBeFreed_;
     };
   }
