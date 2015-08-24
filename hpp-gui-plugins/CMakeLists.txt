@@ -19,4 +19,5 @@
 
 IF (HPP_GUI_FOUND)
   ADD_SUBDIRECTORY(hppmonitoringplugin)
+  ADD_SUBDIRECTORY(hppmanipulationcorbaplugin)
 ENDIF (HPP_GUI_FOUND)

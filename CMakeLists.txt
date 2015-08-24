@@ -33,6 +33,7 @@ FIND_PACKAGE(Qt4 REQUIRED QtCore QtGui)
 ADD_OPTIONAL_DEPENDENCY("hpp-gui")
 ADD_REQUIRED_DEPENDENCY("hpp-corbaserver")
 ADD_REQUIRED_DEPENDENCY("hpp-manipulation-corba")
+ADD_REQUIRED_DEPENDENCY("hpp-wholebody-step-corba")
 
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake_modules )
 FIND_PACKAGE("QGV")
