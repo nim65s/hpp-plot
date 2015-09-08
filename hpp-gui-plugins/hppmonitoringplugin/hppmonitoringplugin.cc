@@ -43,6 +43,8 @@ void HppMonitoringPlugin::init()
   a->setText ("Extend current config");
   connect (a, SIGNAL (activated(hpp::ID)), SLOT (extendCurrentConfigOn(hpp::ID)));
   cgWidget_->addEdgeContextMenuAction (a);
+
+  connect (main, SIGNAL (refresh()), cgWidget_, SLOT (updateGraph()));
 }
 
 QString HppMonitoringPlugin::name() const
