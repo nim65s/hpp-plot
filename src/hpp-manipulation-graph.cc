@@ -78,26 +78,27 @@ namespace hpp {
 //       /*
       hpp::GraphComp_var graph;
       hpp::GraphElements_var elmts;
-      manip_->graph()->getGraph(graph.out(), elmts.out());
+      try {
+        manip_->graph()->getGraph(graph.out(), elmts.out());
 
-      scene_->setGraphAttribute("label", QString (graph->name));
+        scene_->setGraphAttribute("label", QString (graph->name));
 
-//      scene_->setGraphAttribute("splines", "ortho");
-      scene_->setGraphAttribute("rankdir", "LR");
-      //scene_->setGraphAttribute("concentrate", "true"); //Error !
-      scene_->setGraphAttribute("nodesep", "0.4");
+        //      scene_->setGraphAttribute("splines", "ortho");
+        scene_->setGraphAttribute("rankdir", "LR");
+        //scene_->setGraphAttribute("concentrate", "true"); //Error !
+        scene_->setGraphAttribute("nodesep", "0.4");
 
-      scene_->setNodeAttribute("shape", "circle");
-      scene_->setNodeAttribute("style", "filled");
-      scene_->setNodeAttribute("fillcolor", "white");
-      scene_->setNodeAttribute("height", "1.2");
-      scene_->setEdgeAttribute("minlen", "3");
-      //scene_->setEdgeAttribute("dir", "both");
+        scene_->setNodeAttribute("shape", "circle");
+        scene_->setNodeAttribute("style", "filled");
+        scene_->setNodeAttribute("fillcolor", "white");
+        scene_->setNodeAttribute("height", "1.2");
+        scene_->setEdgeAttribute("minlen", "3");
+        //scene_->setEdgeAttribute("dir", "both");
 
 
-      // Add the nodes
-      QMap < ::CORBA::Long, QGVNode*> nodes;
-      for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
+        // Add the nodes
+        QMap < ::CORBA::Long, QGVNode*> nodes;
+        for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
           QGVNode* n = scene_->addNode (QString (elmts->nodes[i].name));
           n->setData(IdRole, QVariant::fromValue < ::hpp::ID> (elmts->nodes[i].id));
           n->setData(SuccessRateRole, 0.f/0.f);
@@ -105,13 +106,16 @@ namespace hpp {
           n->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
           nodes[elmts->nodes[i].id] = n;
         }
-      for (std::size_t i = 0; i < elmts->edges.length(); ++i) {
+        for (std::size_t i = 0; i < elmts->edges.length(); ++i) {
           QGVEdge* e = scene_->addEdge (nodes[elmts->edges[i].start],
               nodes[elmts->edges[i].end],
               QString (elmts->edges[i].name));
           e->setData(IdRole, QVariant::fromValue < ::hpp::ID> (elmts->edges[i].id));
           e->setData(SuccessRateRole, 0.f/0.f);
         }
+      } catch (const hpp::Error& e) {
+        qDebug () << e.msg;
+      }
       //*/
     }
 
