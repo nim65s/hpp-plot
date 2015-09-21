@@ -5,6 +5,8 @@
 #include <QPushButton>
 #include <QMenu>
 #include <QWheelEvent>
+#include <QSplitter>
+#include <QScrollBar>
 #include <QGraphicsSceneDragDropEvent>
 #include <qmath.h>
 
@@ -37,32 +39,45 @@ namespace hpp {
 
     GraphWidget::GraphWidget(QString name, QWidget* parent)
       : QWidget (parent),
-        scene_ (new QGVScene(name, this)),
-        buttonBox_ (new QWidget (this)),
-        elmtInfo_ (new QLabel (this)),
-        loggingInfo_ (new QLabel (this)),
-        view_ (new GraphView (this)),
+        scene_ (new QGVScene(name, 0)),
+        buttonBox_ (new QWidget ()),
+        elmtInfo_ (new QTextEdit ()),
+        loggingInfo_ (new QTextEdit ()),
+        view_ (new GraphView (0)),
         layoutShouldBeFreed_ (false)
     {
       view_->setScene(scene_);
-      QGridLayout* gl = new QGridLayout (this);
-      this->setLayout(gl);
-//      QVBoxLayout* vl = new QVBoxLayout (this);
-      gl->addWidget(buttonBox_,   0, 0, 1, 2);
-      gl->addWidget(view_,        1, 1, 2, 1);
-      gl->addWidget(elmtInfo_,    1, 0, 1, 1);
-      gl->addWidget(loggingInfo_, 2, 0, 1, 1);
-//      gl->setMargin(0);
+
+      elmtInfo_->setReadOnly (true);
+      loggingInfo_->setReadOnly (true);
+      elmtInfo_->setText ("No info");
+      loggingInfo_->setText ("No info");
+      elmtInfo_->setWordWrapMode(QTextOption::NoWrap);
+      loggingInfo_->setWordWrapMode(QTextOption::NoWrap);
+
       view_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
       view_->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
       view_->setRenderHint(QPainter::Antialiasing);
       view_->setRenderHint(QPainter::TextAntialiasing);
 
-      elmtInfo_->setWordWrap (true);
-      elmtInfo_->setText ("No info");
-      loggingInfo_->setText ("No info");
-      elmtInfo_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-      loggingInfo_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+      QSplitter* splitter = new QSplitter ();
+      splitter->setOrientation(Qt::Horizontal);
+      QWidget* infoW = new QWidget ();
+      QVBoxLayout* infoL = new QVBoxLayout ();
+      infoL->addWidget(elmtInfo_);
+      infoL->addWidget(loggingInfo_);
+      infoW->setLayout(infoL);
+      splitter->addWidget(infoW);
+      splitter->addWidget(view_);
+      QVBoxLayout* vl = new QVBoxLayout ();
+      vl->addWidget(buttonBox_);
+      vl->addWidget(splitter);
+      splitter->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+      this->setLayout(vl);
+
+      elmtInfo_->resize(elmtInfo_->minimumSize());
+      loggingInfo_->resize(loggingInfo_->minimumSize());
+      view_->resize(splitter->width() - elmtInfo_->width(), splitter->height());
 
       connect(scene_, SIGNAL(nodeContextMenu(QGVNode*)), SLOT(nodeContextMenu(QGVNode*)));
       connect(scene_, SIGNAL(nodeDoubleClick(QGVNode*)), SLOT(nodeDoubleClick(QGVNode*)));

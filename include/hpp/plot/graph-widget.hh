@@ -5,7 +5,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QComboBox>
-#include <QLabel>
+#include <QTextEdit>
 
 #include <QGVScene.h>
 
@@ -44,8 +44,8 @@ namespace hpp {
       virtual void fillScene ();
       QGVScene* scene_;
       QWidget* buttonBox_;
-      QLabel* elmtInfo_;
-      QLabel* loggingInfo_;
+      QTextEdit* elmtInfo_;
+      QTextEdit* loggingInfo_;
 
     private:
       GraphView* view_;
