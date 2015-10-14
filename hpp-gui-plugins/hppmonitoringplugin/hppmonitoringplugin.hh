@@ -9,10 +9,11 @@
 #undef __problem_hh__
 #include <hpp/corbaserver/client.hh>
 
-class HppMonitoringPlugin : public QObject, public PluginInterface
+class HppMonitoringPlugin : public QObject, public PluginInterface,
+  public CorbaInterface
 {
   Q_OBJECT
-  Q_INTERFACES (PluginInterface)
+  Q_INTERFACES (PluginInterface CorbaInterface)
 
 public:
   explicit HppMonitoringPlugin ();
@@ -23,6 +24,12 @@ public:
 public:
   void init();
   QString name() const;
+
+  // CorbaInterface
+public:
+  virtual void openConnection ();
+  virtual void closeConnection();
+  virtual bool corbaException (int jobId, const CORBA::Exception &excep) const;
 
 public slots:
   void projectRandomConfigOn(hpp::ID idNode);

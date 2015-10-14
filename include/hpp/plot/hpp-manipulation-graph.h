@@ -44,6 +44,8 @@ namespace hpp {
       void addNodeContextMenuAction (GraphAction* action);
       void addEdgeContextMenuAction (GraphAction* action);
 
+      void client (corbaServer::manipulation::Client* hpp);
+
     protected:
       void fillScene ();
 

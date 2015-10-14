@@ -4,11 +4,9 @@
 
 HppMonitoringPlugin::HppMonitoringPlugin() :
   cgWidget_ (NULL),
-  manip_ (new hpp::corbaServer::manipulation::Client (0,NULL)),
-  basic_ (new hpp::corbaServer::Client (0,NULL))
+  manip_ (NULL),
+  basic_ (NULL)
 {
-  manip_->connect();
-  basic_->connect();
 }
 
 HppMonitoringPlugin::~HppMonitoringPlugin()
@@ -19,12 +17,13 @@ HppMonitoringPlugin::~HppMonitoringPlugin()
       delete dock;
     }
   docks_.clear();
-  delete manip_;
-  delete basic_;
+  closeConnection ();
 }
 
 void HppMonitoringPlugin::init()
 {
+  openConnection ();
+
   MainWindow* main = MainWindow::instance ();
   QDockWidget* dock;
 
@@ -50,6 +49,36 @@ void HppMonitoringPlugin::init()
 QString HppMonitoringPlugin::name() const
 {
   return QString ("Monitoring for hpp-manipulation-corba");
+}
+
+void HppMonitoringPlugin::openConnection()
+{
+  closeConnection ();
+  basic_ = new hpp::corbaServer::Client (0,0);
+  manip_ = new hpp::corbaServer::manipulation::Client (0,0);
+  basic_->connect ();
+  manip_->connect ();
+  if (cgWidget_) cgWidget_->client (manip_);
+}
+
+void HppMonitoringPlugin::closeConnection()
+{
+  if (basic_) delete basic_;
+  basic_ = NULL;
+  if (manip_) delete manip_;
+  manip_ = NULL;
+}
+
+bool HppMonitoringPlugin::corbaException(int jobId, const CORBA::Exception &excep) const
+{
+  try {
+    const hpp::Error& error = dynamic_cast <const hpp::Error&> (excep);
+    MainWindow::instance ()->logJobFailed (jobId, QString (error.msg));
+    return true;
+  } catch (const std::exception& exp) {
+    qDebug () << exp.what();
+  }
+  return false;
 }
 
 void HppMonitoringPlugin::projectRandomConfigOn(hpp::ID idNode)

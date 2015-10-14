@@ -62,6 +62,12 @@ namespace hpp {
       edgeContextMenuActions_.append (action);
     }
 
+    void HppManipulationGraphWidget::client (corbaServer::manipulation::Client* hpp)
+    {
+      manip_ = hpp;
+    }
+
+
     void HppManipulationGraphWidget::fillScene()
     {
       /*
