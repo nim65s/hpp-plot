@@ -49,7 +49,7 @@ SET (${PROJECT_NAME}_HEADERS
   include/hpp/plot/qcustomplot.h
   include/hpp/plot/histogram-widget.hh
   include/hpp/plot/graph-widget.hh
-  include/hpp/plot/hpp-manipulation-graph.h
+  include/hpp/plot/hpp-manipulation-graph.hh
   )
 SET (${PROJECT_NAME}_HEADERS_NOMOC
 )

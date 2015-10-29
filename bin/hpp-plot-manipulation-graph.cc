@@ -14,7 +14,7 @@
 // received a copy of the GNU Lesser General Public License along with
 // hpp-plot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "hpp/plot/hpp-manipulation-graph.h"
+#include "hpp/plot/hpp-manipulation-graph.hh"
 
 #include <QDebug>
 #include <QApplication>

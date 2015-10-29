@@ -5,26 +5,30 @@
 #include <hpp/corbaserver/wholebody-step/server.hh>
 #include <hpp/corbaserver/manipulation/server.hh>
 
-#include <hpp/gui/omniorb/omniorbthread.h>
+#include <hpp/gui/omniorb/omniorbthread.hh>
 
-class HppServerProcess : public ServerProcess
-{
-  Q_OBJECT
+namespace hpp {
+  namespace plot {
+    class HppServerProcess : public gui::ServerProcess
+    {
+      Q_OBJECT
 
-public:
-  HppServerProcess ( hpp::corbaServer::Server* basic,
-      hpp::wholebodyStep::Server* wbs, hpp::manipulation::Server* manip);
+      public:
+        HppServerProcess ( hpp::corbaServer::Server* basic,
+            hpp::wholebodyStep::Server* wbs, hpp::manipulation::Server* manip);
 
-  ~HppServerProcess ();
+        ~HppServerProcess ();
 
-public slots:
-  void init ();
-  void processRequest (bool loop);
+        public slots:
+          void init ();
+        void processRequest (bool loop);
 
-private:
-  hpp::corbaServer::Server*   basic_;
-  hpp::wholebodyStep::Server* wbs_;
-  hpp::manipulation::Server*  manip_;
-};
+      private:
+        hpp::corbaServer::Server*   basic_;
+        hpp::wholebodyStep::Server* wbs_;
+        hpp::manipulation::Server*  manip_;
+    };
+  } // namespace plot
+} // namespace hpp
 
 #endif // HPPSERVERPROCESS_HH

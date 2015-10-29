@@ -1,30 +1,34 @@
 #ifndef HPPMANIPULATIONPLUGIN_HH
 #define HPPMANIPULATIONPLUGIN_HH
 
-#include <hpp/gui/plugin-interface.h>
-#include <hpp/gui/omniorb/omniorbthread.h>
+#include <hpp/gui/plugin-interface.hh>
+#include <hpp/gui/omniorb/omniorbthread.hh>
 
-class HppManipulationPlugin : public QObject, public PluginInterface
-{
-  Q_OBJECT
-  Q_INTERFACES (PluginInterface)
+namespace hpp {
+  namespace plot {
+    class HppManipulationPlugin : public QObject, public gui::PluginInterface
+    {
+      Q_OBJECT
+        Q_INTERFACES (hpp::gui::PluginInterface)
 
-public:
-  explicit HppManipulationPlugin ();
+      public:
+        explicit HppManipulationPlugin ();
 
-  virtual ~HppManipulationPlugin ();
+        virtual ~HppManipulationPlugin ();
 
 signals:
 
-public slots:
+        public slots:
 
-  // PluginInterface interface
-public:
-  void init();
-  QString name() const;
+          // PluginInterface interface
+      public:
+          void init();
+          QString name() const;
 
-private:
-  CorbaServer* server_;
-};
+      private:
+          gui::CorbaServer* server_;
+    };
+  } // namespace plot
+} // namespace hpp
 
 #endif // HPPMANIPULATIONPLUGIN_HH

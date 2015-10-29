@@ -1,4 +1,4 @@
-#include "hpp/plot/hpp-manipulation-graph.h"
+#include "hpp/plot/hpp-manipulation-graph.hh"
 
 #include <QGVNode.h>
 #include <QGVEdge.h>

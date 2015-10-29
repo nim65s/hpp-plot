@@ -7,42 +7,48 @@
 
 #include <hppserverprocess.hh>
 
-HppManipulationPlugin::HppManipulationPlugin() :
-  server_ (NULL)
-{
-}
+using hpp::gui::CorbaServer;
 
-HppManipulationPlugin::~HppManipulationPlugin()
-{
-  if (server_) {
-      server_->wait();
-      delete server_;
+namespace hpp {
+  namespace plot {
+    HppManipulationPlugin::HppManipulationPlugin() :
+      server_ (NULL)
+    {
     }
-}
 
-void HppManipulationPlugin::init()
-{
-  hpp::manipulation::ProblemSolverPtr_t ps = hpp::manipulation::ProblemSolver::create ();
-  ps->addPathPlannerType ("M-RRT", hpp::manipulation::ManipulationPlanner::create);
-  ps->addPathValidationType ("Graph-discretized", hpp::manipulation::
-      GraphPathValidation::create <hpp::core::DiscretizedCollisionChecking>);
-  ps->pathPlannerType ("M-RRT");
-  ps->pathValidationType ("Graph-discretized", 0.05);
+    HppManipulationPlugin::~HppManipulationPlugin()
+    {
+      if (server_) {
+        server_->wait();
+        delete server_;
+      }
+    }
 
-  hpp::corbaServer::Server* bs = new hpp::corbaServer::Server (ps, 0, NULL, true);
-  hpp::wholebodyStep::Server* ws =  new hpp::wholebodyStep::Server (0, NULL, true);
-  hpp::manipulation::Server* ms = new hpp::manipulation::Server (0, NULL, true);
-  ws->setProblemSolver (ps);
-  ms->setProblemSolver (ps);
+    void HppManipulationPlugin::init()
+    {
+      hpp::manipulation::ProblemSolverPtr_t ps = hpp::manipulation::ProblemSolver::create ();
+      ps->addPathPlannerType ("M-RRT", hpp::manipulation::ManipulationPlanner::create);
+      ps->addPathValidationType ("Graph-discretized", hpp::manipulation::
+          GraphPathValidation::create <hpp::core::DiscretizedCollisionChecking>);
+      ps->pathPlannerType ("M-RRT");
+      ps->pathValidationType ("Graph-discretized", 0.05);
 
-  server_ = new CorbaServer (new HppServerProcess (bs, ws, ms));
-  server_->start();
-  server_->waitForInitDone();
-}
+      hpp::corbaServer::Server* bs = new hpp::corbaServer::Server (ps, 0, NULL, true);
+      hpp::wholebodyStep::Server* ws =  new hpp::wholebodyStep::Server (0, NULL, true);
+      hpp::manipulation::Server* ms = new hpp::manipulation::Server (0, NULL, true);
+      ws->setProblemSolver (ps);
+      ms->setProblemSolver (ps);
 
-QString HppManipulationPlugin::name() const
-{
-  return QString ("hpp-manipulation-corba plugin");
-}
+      server_ = new CorbaServer (new HppServerProcess (bs, ws, ms));
+      server_->start();
+      server_->waitForInitDone();
+    }
 
-Q_EXPORT_PLUGIN2 (hppmanipulationplugin, HppManipulationPlugin)
+    QString HppManipulationPlugin::name() const
+    {
+      return QString ("hpp-manipulation-corba plugin");
+    }
+  } // namespace plot
+} // namespace hpp
+
+Q_EXPORT_PLUGIN2 (hppmanipulationplugin, hpp::plot::HppManipulationPlugin)
