@@ -14,6 +14,13 @@
 
 namespace hpp {
   namespace plot {
+    namespace {
+      void initConfigProjStat (::hpp::ConfigProjStat& p) {
+        p.success = 0;
+        p.error = 0;
+        p.nbObs = 0;
+      }
+    }
     GraphAction::GraphAction(QWidget *parent) :
       QAction (parent)
     {
@@ -24,9 +31,6 @@ namespace hpp {
     {
       emit activated (id_);
     }
-
-    const int HppManipulationGraphWidget::IdRole = Qt::UserRole;
-    const int HppManipulationGraphWidget::SuccessRateRole = IdRole + 1;
 
     HppManipulationGraphWidget::HppManipulationGraphWidget (corbaServer::manipulation::Client* hpp_, QWidget *parent)
       : GraphWidget ("Manipulation graph", parent),
@@ -67,7 +71,6 @@ namespace hpp {
       manip_ = hpp;
     }
 
-
     void HppManipulationGraphWidget::fillScene()
     {
       /*
@@ -106,8 +109,9 @@ namespace hpp {
         QMap < ::CORBA::Long, QGVNode*> nodes;
         for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
           QGVNode* n = scene_->addNode (QString (elmts->nodes[i].name));
-          n->setData(IdRole, QVariant::fromValue < ::hpp::ID> (elmts->nodes[i].id));
-          n->setData(SuccessRateRole, 0.f/0.f);
+          NodeInfo ni;
+          ni.id = elmts->nodes[i].id;
+          nodeInfos_[n] = ni;
           n->setFlag (QGraphicsItem::ItemIsMovable, true);
           n->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
           nodes[elmts->nodes[i].id] = n;
@@ -116,8 +120,9 @@ namespace hpp {
           QGVEdge* e = scene_->addEdge (nodes[elmts->edges[i].start],
               nodes[elmts->edges[i].end],
               QString (elmts->edges[i].name));
-          e->setData(IdRole, QVariant::fromValue < ::hpp::ID> (elmts->edges[i].id));
-          e->setData(SuccessRateRole, 0.f/0.f);
+          EdgeInfo ei;
+          ei.id = elmts->edges[i].id;
+          edgeInfos_[e] = ei;
         }
       } catch (const hpp::Error& e) {
         qDebug () << e.msg;
@@ -131,11 +136,15 @@ namespace hpp {
       foreach (QGraphicsItem* elmt, scene_->items()) {
           QGVNode* node = dynamic_cast <QGVNode*> (elmt);
           if (node) {
-              manip_->graph()->getConfigProjectorStats (node->data(IdRole).value <hpp::ID>(),
-                                                        config.out(), path.out());
-              float sr = (config->nbObs > 0) ? (float)config->success/(float)config->nbObs : 0.f / 0.f;
-              node->setData(SuccessRateRole, sr);
-              QString colorcode = (config->nbObs > 0) ? QColor (255,(int)(sr*255),(int)(sr*255)).name() : "white";
+              NodeInfo ni = nodeInfos_[node];
+              manip_->graph()->getConfigProjectorStats
+                (ni.id, ni.configStat.out(), ni.pathStat.out());
+              float sr = (ni.configStat->nbObs > 0)
+                ? (float)ni.configStat->success/(float)ni.configStat->nbObs
+                : 0.f / 0.f;
+              QString colorcode = (config->nbObs > 0)
+                ? QColor (255,(int)(sr*255),(int)(sr*255)).name()
+                : "white";
               const QString& fillcolor = node->getAttribute("fillcolor");
               if (!(fillcolor == colorcode)) {
                   node->setAttribute("fillcolor", colorcode);
@@ -145,11 +154,15 @@ namespace hpp {
             }
           QGVEdge* edge = dynamic_cast <QGVEdge*> (elmt);
           if (edge) {
-              manip_->graph()->getConfigProjectorStats (edge->data(IdRole).value <hpp::ID>(),
-                                                        config.out(), path.out());
-              float sr = (config->nbObs > 0) ? (float)config->success/(float)config->nbObs : 0.f / 0.f;
-              edge->setData(SuccessRateRole, sr);
-              QString colorcode = (config->nbObs > 0) ? QColor (255 - (int)(sr*255),0,0).name() : "";
+              EdgeInfo ei = edgeInfos_[edge];
+              manip_->graph()->getConfigProjectorStats
+                (ei.id, ei.configStat.out(), ei.pathStat.out());
+              float sr = (ei.configStat->nbObs > 0)
+                ? (float)ei.configStat->success/(float)ei.configStat->nbObs
+                : 0.f / 0.f;
+              QString colorcode = (config->nbObs > 0)
+                ? QColor (255 - (int)(sr*255),0,0).name()
+                : "";
               const QString& color = edge->getAttribute("color");
               if (!(color == colorcode)) {
                   edge->setAttribute("color", colorcode);
@@ -163,12 +176,12 @@ namespace hpp {
 
     void HppManipulationGraphWidget::nodeContextMenu(QGVNode *node)
     {
-      ::hpp::ID id = node->data (IdRole).value < ::hpp::ID> ();
+      const NodeInfo& ni = nodeInfos_[node];
 
       QMenu cm ("Node context menu", this);
       foreach (GraphAction* action, nodeContextMenuActions_) {
           cm.addAction (action);
-          action->id_ = id;
+          action->id_ = ni.id;
         }
       cm.exec(QCursor::pos());
     }
@@ -180,12 +193,12 @@ namespace hpp {
 
     void HppManipulationGraphWidget::edgeContextMenu(QGVEdge *edge)
     {
-      ::hpp::ID id = edge->data (IdRole).value < ::hpp::ID> ();
+      const EdgeInfo& ei = edgeInfos_[edge];
 
       QMenu cm ("Edge context menu", this);
       foreach (GraphAction* action, edgeContextMenuActions_) {
           cm.addAction (action);
-          action->id_ = id;
+          action->id_ = ei.id;
         }
       cm.exec(QCursor::pos());
     }
@@ -202,33 +215,56 @@ namespace hpp {
           elmtInfo_->setText ("No info");
         }
       if (items.size() == 1) {
-          QString type, name; float sr; ::hpp::ID id;
+          QString type, name; int success, error, nbObs; ::hpp::ID id;
           QGVNode* node = dynamic_cast <QGVNode*> (items.first());
           QGVEdge* edge = dynamic_cast <QGVEdge*> (items.first());
           if (node) {
               type = "Node";
               name = node->label();
+              const NodeInfo& ni = nodeInfos_[node];
+              id = ni.id;
+              success = ni.configStat->success;
+              error = ni.configStat->error;
+              nbObs = ni.configStat->nbObs;
             } else if (edge) {
               type = "Edge";
               name = edge->label();
+              const EdgeInfo& ei = edgeInfos_[edge];
+              id = ei.id;
+              success = ei.configStat->success;
+              error = ei.configStat->error;
+              nbObs = ei.configStat->nbObs;
             } else {
               return;
             }
-          sr = items.first()->data(SuccessRateRole).toFloat();
-          id = items.first()->data(IdRole).value < ::hpp::ID> ();
           elmtInfo_->setText (
             QString ("<h4>%1 %2</h4><ul>"
               "<li>Id: %3</li>"
-              "<li>Success rate: %4</li>"
+              "<li>Success: %4</li>"
+              "<li>Error: %5</li>"
+              "<li>Nb observations: %6</li>"
               "</ul>")
-            .arg (type).arg (name).arg(id).arg(sr));
+            .arg (type).arg (name).arg(id)
+            .arg(success).arg(error).arg(nbObs));
         }
     }
 
-    void hpp::plot::HppManipulationGraphWidget::startStopUpdateStats(bool start)
+    void HppManipulationGraphWidget::startStopUpdateStats(bool start)
     {
       if (start) updateStatsTimer_->start ();
       else       updateStatsTimer_->stop ();
+    }
+
+    HppManipulationGraphWidget::NodeInfo::NodeInfo () : id (-1)
+    {
+      initConfigProjStat (configStat.out());
+      initConfigProjStat (pathStat.out());
+    }
+
+    HppManipulationGraphWidget::EdgeInfo::EdgeInfo () : id (-1)
+    {
+      initConfigProjStat (configStat.out());
+      initConfigProjStat (pathStat.out());
     }
   }
 }

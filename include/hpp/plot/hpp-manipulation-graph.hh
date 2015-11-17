@@ -34,9 +34,6 @@ namespace hpp {
       Q_OBJECT
 
     public:
-      static const int IdRole;
-      static const int SuccessRateRole;
-
       HppManipulationGraphWidget (corbaServer::manipulation::Client* hpp_, QWidget* parent);
 
       ~HppManipulationGraphWidget ();
@@ -66,8 +63,25 @@ namespace hpp {
     private:
       corbaServer::manipulation::Client* manip_;
 
+      struct NodeInfo {
+        ::hpp::ID id;
+        QString constraintStr;
+
+        ::hpp::ConfigProjStat_var configStat, pathStat;
+        NodeInfo ();
+      };
+      struct EdgeInfo {
+        ::hpp::ID id;
+        QString constraintStr;
+
+        ::hpp::ConfigProjStat_var configStat, pathStat;
+        EdgeInfo ();
+      };
+
       QList <GraphAction*> nodeContextMenuActions_;
       QList <GraphAction*> edgeContextMenuActions_;
+      QMap <QGVNode*, NodeInfo> nodeInfos_;
+      QMap <QGVEdge*, EdgeInfo> edgeInfos_;
 
       QTimer* updateStatsTimer_;
     };
