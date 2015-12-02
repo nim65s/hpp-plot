@@ -21,21 +21,25 @@ namespace hpp {
         p.nbObs = 0;
       }
     }
-    GraphAction::GraphAction(QWidget *parent) :
-      QAction (parent)
+    GraphAction::GraphAction(HppManipulationGraphWidget *parent) :
+      QAction (parent),
+      gw_ (parent)
     {
       connect (this, SIGNAL (triggered()), SLOT(transferSignal()));
     }
 
     void GraphAction::transferSignal()
     {
-      emit activated (id_);
+      hpp::ID id;
+      if (gw_->selectionID(id))
+        emit activated (id);
     }
 
     HppManipulationGraphWidget::HppManipulationGraphWidget (corbaServer::manipulation::Client* hpp_, QWidget *parent)
       : GraphWidget ("Manipulation graph", parent),
         manip_ (hpp_),
-        updateStatsTimer_ (new QTimer (this))
+        updateStatsTimer_ (new QTimer (this)),
+        currentId_ (-1)
     {
       QPushButton* stats = new QPushButton (
             QIcon::fromTheme("view-refresh"), "&Statistics", buttonBox_);
@@ -69,6 +73,12 @@ namespace hpp {
     void HppManipulationGraphWidget::client (corbaServer::manipulation::Client* hpp)
     {
       manip_ = hpp;
+    }
+
+    bool hpp::plot::HppManipulationGraphWidget::selectionID(ID &id)
+    {
+      id = currentId_;
+      return currentId_ != -1;
     }
 
     void HppManipulationGraphWidget::fillScene()
@@ -176,13 +186,16 @@ namespace hpp {
     void HppManipulationGraphWidget::nodeContextMenu(QGVNode *node)
     {
       const NodeInfo& ni = nodeInfos_[node];
+      hpp::ID id = currentId_;
+      currentId_ = ni.id;
 
       QMenu cm ("Node context menu", this);
       foreach (GraphAction* action, nodeContextMenuActions_) {
           cm.addAction (action);
-          action->id_ = ni.id;
-        }
+      }
       cm.exec(QCursor::pos());
+
+      currentId_ = id;
     }
 
     void HppManipulationGraphWidget::nodeDoubleClick(QGVNode *node)
@@ -193,13 +206,16 @@ namespace hpp {
     void HppManipulationGraphWidget::edgeContextMenu(QGVEdge *edge)
     {
       const EdgeInfo& ei = edgeInfos_[edge];
+      hpp::ID id = currentId_;
+      currentId_ = ei.id;
 
       QMenu cm ("Edge context menu", this);
       foreach (GraphAction* action, edgeContextMenuActions_) {
           cm.addAction (action);
-          action->id_ = ei.id;
-        }
+      }
       cm.exec(QCursor::pos());
+
+      currentId_ = id;
     }
 
     void HppManipulationGraphWidget::edgeDoubleClick(QGVNode *edge)
@@ -210,6 +226,7 @@ namespace hpp {
     void HppManipulationGraphWidget::selectionChanged()
     {
       QList <QGraphicsItem*> items = scene_->selectedItems();
+      currentId_ = -1;
       if (items.size() == 0) {
           elmtInfo_->setText ("No info");
         }
@@ -222,6 +239,7 @@ namespace hpp {
               name = node->label();
               const NodeInfo& ni = nodeInfos_[node];
               id = ni.id;
+              currentId_ = id;
               success = ni.configStat->success;
               error = ni.configStat->error;
               nbObs = ni.configStat->nbObs;
@@ -230,6 +248,7 @@ namespace hpp {
               name = edge->label();
               const EdgeInfo& ei = edgeInfos_[edge];
               id = ei.id;
+              currentId_ = id;
               success = ei.configStat->success;
               error = ei.configStat->error;
               nbObs = ei.configStat->nbObs;

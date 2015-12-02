@@ -41,19 +41,25 @@ namespace hpp {
       dock->toggleViewAction()->setShortcut(hpp::gui::DockKeyShortcutBase + Qt::Key_G);
 
       hpp::plot::GraphAction* a = new hpp::plot::GraphAction (cgWidget_);
+      a->setShortcut(Qt::Key_C);
       a->setText ("Generate from &current config");
       connect (a, SIGNAL (activated(hpp::ID)), SLOT (projectCurrentConfigOn(hpp::ID)));
       cgWidget_->addNodeContextMenuAction (a);
+      cgWidget_->addAction(a);
 
       a = new hpp::plot::GraphAction (cgWidget_);
+      a->setShortcut(Qt::Key_G);
       a->setText ("&Generate config");
       connect (a, SIGNAL (activated(hpp::ID)), SLOT (projectRandomConfigOn(hpp::ID)));
       cgWidget_->addNodeContextMenuAction (a);
+      cgWidget_->addAction(a);
 
       a = new hpp::plot::GraphAction (cgWidget_);
+      a->setShortcut(Qt::Key_E);
       a->setText ("&Extend current config");
       connect (a, SIGNAL (activated(hpp::ID)), SLOT (extendCurrentConfigOn(hpp::ID)));
       cgWidget_->addEdgeContextMenuAction (a);
+      cgWidget_->addAction(a);
 
       connect (main, SIGNAL (refresh()), cgWidget_, SLOT (updateGraph()));
     }
@@ -96,7 +102,7 @@ namespace hpp {
     void HppMonitoringPlugin::projectRandomConfigOn(hpp::ID idNode)
     {
       QFutureWatcher <bool>* fw = new QFutureWatcher<bool>(this);
-      QDialog* d = new QDialog ();
+      QDialog* d = new QDialog (NULL,Qt::Dialog);
       QLabel* l = new QLabel ("Projecting...");
       d->setLayout(new QHBoxLayout);
       d->layout()->addWidget(l);

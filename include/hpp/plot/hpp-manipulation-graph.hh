@@ -14,19 +14,23 @@ namespace hpp {
     }
   }
   namespace plot {
+    class HppManipulationGraphWidget;
+
     class GraphAction : public QAction
     {
       Q_OBJECT
 
     public:
-      GraphAction (QWidget* parent = NULL);
-      hpp::ID id_;
+      GraphAction (HppManipulationGraphWidget* parent);
 
     signals:
       void activated (hpp::ID id);
 
     private slots:
       void transferSignal ();
+
+    private:
+      HppManipulationGraphWidget* gw_;
     };
 
     class HppManipulationGraphWidget : public GraphWidget
@@ -42,6 +46,8 @@ namespace hpp {
       void addEdgeContextMenuAction (GraphAction* action);
 
       void client (corbaServer::manipulation::Client* hpp);
+
+      bool selectionID (hpp::ID& id);
 
     protected:
       void fillScene ();
@@ -84,6 +90,8 @@ namespace hpp {
       QMap <QGVEdge*, EdgeInfo> edgeInfos_;
 
       QTimer* updateStatsTimer_;
+
+      hpp::ID currentId_;
     };
   }
 }
