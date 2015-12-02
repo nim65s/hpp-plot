@@ -1,5 +1,7 @@
 #include "hppmonitoringplugin.hh"
 
+#include <limits>
+
 #include <hpp/gui/mainwindow.hh>
 
 using hpp::gui::MainWindow;
@@ -38,12 +40,17 @@ namespace hpp {
       main->insertDockWidget (dock, Qt::BottomDockWidgetArea, Qt::Horizontal);
 
       hpp::plot::GraphAction* a = new hpp::plot::GraphAction (cgWidget_);
-      a->setText ("Generate config");
+      a->setText ("Generate from &current config");
+      connect (a, SIGNAL (activated(hpp::ID)), SLOT (projectCurrentConfigOn(hpp::ID)));
+      cgWidget_->addNodeContextMenuAction (a);
+
+      a = new hpp::plot::GraphAction (cgWidget_);
+      a->setText ("&Generate config");
       connect (a, SIGNAL (activated(hpp::ID)), SLOT (projectRandomConfigOn(hpp::ID)));
       cgWidget_->addNodeContextMenuAction (a);
 
       a = new hpp::plot::GraphAction (cgWidget_);
-      a->setText ("Extend current config");
+      a->setText ("&Extend current config");
       connect (a, SIGNAL (activated(hpp::ID)), SLOT (extendCurrentConfigOn(hpp::ID)));
       cgWidget_->addEdgeContextMenuAction (a);
 
@@ -87,18 +94,56 @@ namespace hpp {
 
     void HppMonitoringPlugin::projectRandomConfigOn(hpp::ID idNode)
     {
-      hpp::floatSeq_var qRand = basic_->robot ()->shootRandomConfig ();
-      projectConfigOn (qRand.in(), idNode);
+      QFutureWatcher <bool>* fw = new QFutureWatcher<bool>(this);
+      QDialog* d = new QDialog ();
+      QLabel* l = new QLabel ("Projecting...");
+      d->setLayout(new QHBoxLayout);
+      d->layout()->addWidget(l);
+      connect (this,SIGNAL(projectionStatus(QString)), l, SLOT(setText(QString)));
+      d->show();
+      fw->setFuture(QtConcurrent::run (this, &HppMonitoringPlugin::projectRandomConfigOn_impl, idNode));
+      connect (fw, SIGNAL (finished()), d, SLOT (deleteLater()));
+      connect (fw, SIGNAL (finished()), fw, SLOT (deleteLater()));
     }
 
-    void HppMonitoringPlugin::extendCurrentConfigOn(hpp::ID idEdge)
+    bool HppMonitoringPlugin::projectRandomConfigOn_impl(hpp::ID idNode)
+    {
+      hpp::floatSeq_var qRand;
+      hpp::floatSeq_var res;
+      ::CORBA::Double error, minError = std::numeric_limits<double>::infinity();
+      int i = 0;
+      do {
+          qRand = basic_->robot ()->shootRandomConfig ();
+          i++;
+          bool success = manip_->problem()->applyConstraints
+              (idNode, qRand.in(), res.out(), error);
+          if (success) {
+              basic_->robot()->setCurrentConfig (res.in());
+              MainWindow::instance ()->requestApplyCurrentConfiguration ();
+              return true;
+            }
+          if (error < minError) {
+              minError = error;
+            }
+          emit projectionStatus(QString ("Tried %1 times. Minimal residual error is %2").arg(i).arg(minError));
+        } while (true);
+      return false;
+    }
+
+    bool HppMonitoringPlugin::projectCurrentConfigOn(ID idNode)
+    {
+      hpp::floatSeq_var from = basic_->robot()->getCurrentConfig();
+      return projectConfigOn (from.in(), idNode);
+    }
+
+    bool HppMonitoringPlugin::extendCurrentConfigOn(hpp::ID idEdge)
     {
       hpp::floatSeq_var from = basic_->robot()->getCurrentConfig();
       hpp::floatSeq_var qRand = basic_->robot ()->shootRandomConfig ();
-      extendConfigOn (from.in(), qRand.in(), idEdge);
+      return extendConfigOn (from.in(), qRand.in(), idEdge);
     }
 
-    void HppMonitoringPlugin::projectConfigOn(hpp::floatSeq config, hpp::ID idNode)
+    bool HppMonitoringPlugin::projectConfigOn(hpp::floatSeq config, hpp::ID idNode)
     {
       hpp::floatSeq_var res;
       ::CORBA::Double error;
@@ -109,9 +154,10 @@ namespace hpp {
       } else {
         MainWindow::instance ()->logError (QString ("Unable to project configuration. Residual error is %1").arg(error));
       }
+      return success;
     }
 
-    void HppMonitoringPlugin::extendConfigOn(hpp::floatSeq from, hpp::floatSeq config, hpp::ID idEdge)
+    bool HppMonitoringPlugin::extendConfigOn(hpp::floatSeq from, hpp::floatSeq config, hpp::ID idEdge)
     {
       hpp::floatSeq_var res;
       ::CORBA::Double error;
@@ -122,6 +168,7 @@ namespace hpp {
       } else {
         MainWindow::instance ()->logError (QString ("Unable to project configuration. Residual error is %1").arg(error));
       }
+      return success;
     }
   } // namespace plot
 } // namespace hpp
