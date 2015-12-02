@@ -24,7 +24,7 @@ namespace hpp {
     GraphAction::GraphAction(QWidget *parent) :
       QAction (parent)
     {
-      connect (this, SIGNAL (activated()), SLOT(transferSignal()));
+      connect (this, SIGNAL (triggered()), SLOT(transferSignal()));
     }
 
     void GraphAction::transferSignal()
@@ -132,17 +132,16 @@ namespace hpp {
 
     void HppManipulationGraphWidget::updateStatistics()
     {
-      hpp::ConfigProjStat_var config, path;
       foreach (QGraphicsItem* elmt, scene_->items()) {
           QGVNode* node = dynamic_cast <QGVNode*> (elmt);
           if (node) {
-              NodeInfo ni = nodeInfos_[node];
+              NodeInfo& ni = nodeInfos_[node];
               manip_->graph()->getConfigProjectorStats
                 (ni.id, ni.configStat.out(), ni.pathStat.out());
               float sr = (ni.configStat->nbObs > 0)
                 ? (float)ni.configStat->success/(float)ni.configStat->nbObs
                 : 0.f / 0.f;
-              QString colorcode = (config->nbObs > 0)
+              QString colorcode = (ni.configStat->nbObs > 0)
                 ? QColor (255,(int)(sr*255),(int)(sr*255)).name()
                 : "white";
               const QString& fillcolor = node->getAttribute("fillcolor");
@@ -154,13 +153,13 @@ namespace hpp {
             }
           QGVEdge* edge = dynamic_cast <QGVEdge*> (elmt);
           if (edge) {
-              EdgeInfo ei = edgeInfos_[edge];
+              EdgeInfo& ei = edgeInfos_[edge];
               manip_->graph()->getConfigProjectorStats
                 (ei.id, ei.configStat.out(), ei.pathStat.out());
               float sr = (ei.configStat->nbObs > 0)
                 ? (float)ei.configStat->success/(float)ei.configStat->nbObs
                 : 0.f / 0.f;
-              QString colorcode = (config->nbObs > 0)
+              QString colorcode = (ei.configStat->nbObs > 0)
                 ? QColor (255 - (int)(sr*255),0,0).name()
                 : "";
               const QString& color = edge->getAttribute("color");
