@@ -34,10 +34,11 @@ namespace hpp {
       QDockWidget* dock;
 
       // Constraint graph widget
-      dock = new QDockWidget ("Constraint Graph", main);
+      dock = new QDockWidget ("Constraint &Graph", main);
       cgWidget_ = new hpp::plot::HppManipulationGraphWidget (manip_, main);
       dock->setWidget(cgWidget_);
       main->insertDockWidget (dock, Qt::BottomDockWidgetArea, Qt::Horizontal);
+      dock->toggleViewAction()->setShortcut(hpp::gui::DockKeyShortcutBase + Qt::Key_G);
 
       hpp::plot::GraphAction* a = new hpp::plot::GraphAction (cgWidget_);
       a->setText ("Generate from &current config");
