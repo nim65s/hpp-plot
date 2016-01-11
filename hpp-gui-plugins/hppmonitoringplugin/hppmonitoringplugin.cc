@@ -132,6 +132,10 @@ namespace hpp {
           if (error < minError) {
               minError = error;
             }
+          if (i >= 20) {
+            qDebug () << "Projection failed after 20 trials.";
+            break;
+          }
           emit projectionStatus(QString ("Tried %1 times. Minimal residual error is %2").arg(i).arg(minError));
         } while (true);
       return false;
