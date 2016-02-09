@@ -36,8 +36,8 @@ namespace hpp {
       hpp::corbaServer::Server* bs = new hpp::corbaServer::Server (ps, 0, NULL, true);
       hpp::wholebodyStep::Server* ws =  new hpp::wholebodyStep::Server (0, NULL, true);
       hpp::manipulation::Server* ms = new hpp::manipulation::Server (0, NULL, true);
-      ws->setProblemSolver (ps);
-      ms->setProblemSolver (ps);
+      ws->setProblemSolverMap (bs->problemSolverMap());
+      ms->setProblemSolverMap (bs->problemSolverMap());
 
       server_ = new CorbaServer (new HppServerProcess (bs, ws, ms));
       server_->start();
