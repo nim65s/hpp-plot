@@ -11,6 +11,7 @@
 #include <QTimer>
 #include <QLayout>
 #include <QDebug>
+#include <QtGui/qtextdocument.h>
 
 namespace hpp {
   namespace plot {
@@ -262,7 +263,7 @@ namespace hpp {
               "<li>Error: %5</li>"
               "<li>Nb observations: %6</li>"
               "</ul>")
-            .arg (type).arg (name).arg(id)
+            .arg (type).arg (Qt::escape (name)).arg(id)
             .arg(success).arg(error).arg(nbObs));
         }
     }
