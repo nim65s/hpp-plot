@@ -25,7 +25,6 @@ INCLUDE(cmake/base.cmake)
 SET(PROJECT_NAME "hpp-plot")
 SET(PROJECT_URL "https://github.com/jmirabel/hpp-plot")
 SET(PROJECT_DESCRIPTION "Plotting tools for HPP")
-SET(PROJECT_VERSION "0")
 
 SETUP_PROJECT()
 
