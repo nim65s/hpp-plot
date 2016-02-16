@@ -81,6 +81,9 @@ namespace hpp {
         QString constraintStr;
 
         ::hpp::ConfigProjStat_var configStat, pathStat;
+        ::hpp::Names_t_var errors;
+        ::hpp::intSeq_var freqs;
+
         EdgeInfo ();
       };
 

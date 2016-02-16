@@ -167,6 +167,8 @@ namespace hpp {
               EdgeInfo& ei = edgeInfos_[edge];
               manip_->graph()->getConfigProjectorStats
                 (ei.id, ei.configStat.out(), ei.pathStat.out());
+              manip_->graph()->getEdgeStat
+                (ei.id, ei.errors.out(), ei.freqs.out());
               float sr = (ei.configStat->nbObs > 0)
                 ? (float)ei.configStat->success/(float)ei.configStat->nbObs
                 : 0.f / 0.f;
@@ -182,6 +184,7 @@ namespace hpp {
             }
         }
       scene_->update();
+      selectionChanged ();
     }
 
     void HppManipulationGraphWidget::nodeContextMenu(QGVNode *node)
@@ -235,6 +238,7 @@ namespace hpp {
           QString type, name; int success, error, nbObs; ::hpp::ID id;
           QGVNode* node = dynamic_cast <QGVNode*> (items.first());
           QGVEdge* edge = dynamic_cast <QGVEdge*> (items.first());
+          QString end;
           if (node) {
               type = "Node";
               name = node->label();
@@ -253,6 +257,14 @@ namespace hpp {
               success = ei.configStat->success;
               error = ei.configStat->error;
               nbObs = ei.configStat->nbObs;
+              end = "<p>Extension results<ul>";
+              for (std::size_t i = 0; i < std::min(ei.errors->length(),ei.freqs->length()); ++i) {
+                end.append (
+                    QString ("<li>%1: %2</li>")
+                    .arg(QString(ei.errors.in()[i]))
+                    .arg(        ei.freqs.in()[i]  ));
+              }
+              end.append("</ul></p>");
             } else {
               return;
             }
@@ -262,9 +274,9 @@ namespace hpp {
               "<li>Success: %4</li>"
               "<li>Error: %5</li>"
               "<li>Nb observations: %6</li>"
-              "</ul>")
+              "</ul>%7")
             .arg (type).arg (Qt::escape (name)).arg(id)
-            .arg(success).arg(error).arg(nbObs));
+            .arg(success).arg(error).arg(nbObs).arg(end));
         }
     }
 
@@ -284,6 +296,8 @@ namespace hpp {
     {
       initConfigProjStat (configStat.out());
       initConfigProjStat (pathStat.out());
+      errors = new Names_t();
+      freqs = new intSeq();
     }
   }
 }
