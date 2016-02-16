@@ -65,7 +65,7 @@ namespace hpp {
       QWidget* infoW = new QWidget ();
       QVBoxLayout* infoL = new QVBoxLayout ();
       infoL->addWidget(elmtInfo_);
-      infoL->addWidget(loggingInfo_);
+      // infoL->addWidget(loggingInfo_);
       infoW->setLayout(infoL);
       splitter->addWidget(infoW);
       splitter->addWidget(view_);
@@ -76,7 +76,7 @@ namespace hpp {
       this->setLayout(vl);
 
       elmtInfo_->resize(elmtInfo_->minimumSize());
-      loggingInfo_->resize(loggingInfo_->minimumSize());
+      // loggingInfo_->resize(loggingInfo_->minimumSize());
       view_->resize(splitter->width() - elmtInfo_->width(), splitter->height());
 
       connect(scene_, SIGNAL(nodeContextMenu(QGVNode*)), SLOT(nodeContextMenu(QGVNode*)));
