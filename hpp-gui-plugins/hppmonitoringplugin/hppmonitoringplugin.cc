@@ -151,7 +151,12 @@ namespace hpp {
     {
       hpp::floatSeq_var from = basic_->robot()->getCurrentConfig();
       hpp::floatSeq_var qRand = basic_->robot ()->shootRandomConfig ();
-      return extendConfigOn (from.in(), qRand.in(), idEdge);
+      bool success = extendConfigOn (from.in(), qRand.in(), idEdge);
+      if (!success) {
+        basic_->robot()->setCurrentConfig (from.in());
+        MainWindow::instance ()->requestApplyCurrentConfiguration ();
+      }
+      return success;
     }
 
     bool HppMonitoringPlugin::projectConfigOn(hpp::floatSeq config, hpp::ID idNode)
