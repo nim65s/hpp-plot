@@ -3,6 +3,7 @@
 #include <limits>
 
 #include <hpp/gui/mainwindow.hh>
+#include <hpp/gui/omniorb/url.hh>
 
 using hpp::gui::MainWindow;
 
@@ -69,13 +70,23 @@ namespace hpp {
       return QString ("Monitoring for hpp-manipulation-corba");
     }
 
+    static QString getIIOPurl ()
+    {
+      QString host = MainWindow::instance ()->settings_->getSetting
+        ("hpp/host", QString ()).toString ();
+      QString port = MainWindow::instance ()->settings_->getSetting
+        ("hpp/port", QString ()).toString ();
+      return hpp::gui::omniOrb::IIOPurl (host, port);
+    }
+
     void HppMonitoringPlugin::openConnection()
     {
       closeConnection ();
       basic_ = new hpp::corbaServer::Client (0,0);
       manip_ = new hpp::corbaServer::manipulation::Client (0,0);
-      basic_->connect ();
-      manip_->connect ();
+      QByteArray iiop = getIIOPurl ().toAscii();
+      basic_->connect (iiop.constData ());
+      manip_->connect (iiop.constData ());
       if (cgWidget_) cgWidget_->client (manip_);
     }
 
