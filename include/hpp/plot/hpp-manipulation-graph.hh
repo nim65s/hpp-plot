@@ -78,7 +78,10 @@ namespace hpp {
       };
       struct EdgeInfo {
         ::hpp::ID id;
+        QString name;
+        ::CORBA::Long weight;
         QString constraintStr;
+        QGVEdge* edge;
 
         ::hpp::ConfigProjStat_var configStat, pathStat;
         ::hpp::Names_t_var errors;
@@ -86,6 +89,9 @@ namespace hpp {
 
         EdgeInfo ();
       };
+
+      void updateWeight (EdgeInfo& ei, bool get = true);
+      void updateWeight (EdgeInfo& ei, const ::CORBA::Long w);
 
       QList <GraphAction*> nodeContextMenuActions_;
       QList <GraphAction*> edgeContextMenuActions_;

@@ -1,5 +1,7 @@
 #include "hpp/plot/hpp-manipulation-graph.hh"
 
+#include <limits>
+
 #include <QGVNode.h>
 #include <QGVEdge.h>
 #include <QMessageBox>
@@ -8,6 +10,7 @@
 #include <QDir>
 #include <QMenu>
 #include <QPushButton>
+#include <QInputDialog>
 #include <QTimer>
 #include <QLayout>
 #include <QDebug>
@@ -129,11 +132,13 @@ namespace hpp {
         }
         for (std::size_t i = 0; i < elmts->edges.length(); ++i) {
           QGVEdge* e = scene_->addEdge (nodes[elmts->edges[i].start],
-              nodes[elmts->edges[i].end],
-              QString (elmts->edges[i].name));
+              nodes[elmts->edges[i].end], "");
           EdgeInfo ei;
+          ei.name = QString::fromLocal8Bit(elmts->edges[i].name);
           ei.id = elmts->edges[i].id;
+          ei.edge = e;
           edgeInfos_[e] = ei;
+          updateWeight (ei);
         }
       } catch (const hpp::Error& e) {
         qDebug () << e.msg;
@@ -224,7 +229,17 @@ namespace hpp {
 
     void HppManipulationGraphWidget::edgeDoubleClick(QGVEdge *edge)
     {
-      QMessageBox::information(this, tr("Node double clicked"), tr("Node %1").arg(edge->label()));
+      EdgeInfo& ei = edgeInfos_[edge];
+      bool ok;
+      ::CORBA::Long w = QInputDialog::getInt(
+            this, "Update edge weight",
+            tr("Edge %1 weight").arg(edge->label()),
+            ei.weight, 0, std::numeric_limits<int>::max(), 1,
+            &ok);
+      if (ok) {
+          updateWeight(ei, w);
+          edge->updateLayout();
+        }
     }
 
     void HppManipulationGraphWidget::selectionChanged()
@@ -234,6 +249,7 @@ namespace hpp {
       if (items.size() == 0) {
           elmtInfo_->setText ("No info");
         }
+      QString weight;
       if (items.size() == 1) {
           QString type, name; int success, error, nbObs; ::hpp::ID id;
           QGVNode* node = dynamic_cast <QGVNode*> (items.first());
@@ -250,10 +266,11 @@ namespace hpp {
               nbObs = ni.configStat->nbObs;
             } else if (edge) {
               type = "Edge";
-              name = edge->label();
               const EdgeInfo& ei = edgeInfos_[edge];
+              name = ei.name;
               id = ei.id;
               currentId_ = id;
+              weight = QString ("<li>Weight: %1</li>").arg(ei.weight);
               success = ei.configStat->success;
               error = ei.configStat->error;
               nbObs = ei.configStat->nbObs;
@@ -271,11 +288,12 @@ namespace hpp {
           elmtInfo_->setText (
             QString ("<h4>%1 %2</h4><ul>"
               "<li>Id: %3</li>"
-              "<li>Success: %4</li>"
-              "<li>Error: %5</li>"
-              "<li>Nb observations: %6</li>"
-              "</ul>%7")
-            .arg (type).arg (Qt::escape (name)).arg(id)
+              "%4"
+              "<li>Success: %5</li>"
+              "<li>Error: %6</li>"
+              "<li>Nb observations: %7</li>"
+              "</ul>%8")
+            .arg (type).arg (Qt::escape (name)).arg(id).arg (weight)
             .arg(success).arg(error).arg(nbObs).arg(end));
         }
     }
@@ -292,12 +310,32 @@ namespace hpp {
       initConfigProjStat (pathStat.out());
     }
 
-    HppManipulationGraphWidget::EdgeInfo::EdgeInfo () : id (-1)
+    HppManipulationGraphWidget::EdgeInfo::EdgeInfo () : id (-1), edge (NULL)
     {
       initConfigProjStat (configStat.out());
       initConfigProjStat (pathStat.out());
       errors = new Names_t();
       freqs = new intSeq();
+    }
+
+    void HppManipulationGraphWidget::updateWeight (EdgeInfo& ei, bool get)
+    {
+      if (get) ei.weight = manip_->graph()->getWeight(ei.id);
+      if (ei.edge == NULL) return;
+      if (ei.weight <= 0) {
+          ei.edge->setAttribute("style", "dashed");
+          ei.edge->setAttribute("penwidth", "1");
+        } else {
+          ei.edge->setAttribute("style", "filled");
+          ei.edge->setAttribute("penwidth", QString::number(1 + (ei.weight - 1  / 5)));
+        }
+    }
+
+    void HppManipulationGraphWidget::updateWeight (EdgeInfo& ei, const ::CORBA::Long w)
+    {
+      manip_->graph()->setWeight(ei.id, w);
+      ei.weight = w;
+      updateWeight (ei, false);
     }
   }
 }
