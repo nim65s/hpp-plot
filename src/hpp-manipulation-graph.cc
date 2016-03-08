@@ -222,7 +222,7 @@ namespace hpp {
       currentId_ = id;
     }
 
-    void HppManipulationGraphWidget::edgeDoubleClick(QGVNode *edge)
+    void HppManipulationGraphWidget::edgeDoubleClick(QGVEdge *edge)
     {
       QMessageBox::information(this, tr("Node double clicked"), tr("Node %1").arg(edge->label()));
     }

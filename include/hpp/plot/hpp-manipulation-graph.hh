@@ -59,7 +59,7 @@ namespace hpp {
       virtual void nodeContextMenu(QGVNode* node);
       virtual void nodeDoubleClick(QGVNode* node);
       virtual void edgeContextMenu(QGVEdge* edge);
-      virtual void edgeDoubleClick(QGVNode* edge);
+      virtual void edgeDoubleClick(QGVEdge* edge);
 
       void selectionChanged ();
 
