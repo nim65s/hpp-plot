@@ -87,18 +87,6 @@ namespace hpp {
 
     void HppManipulationGraphWidget::fillScene()
     {
-      /*
-      QTemporaryFile dotFile (QDir::tempPath () + QString ("/constraintGraph_XXXXXX.dot"));
-      dotFile.setAutoRemove(false);
-      qDebug() << dotFile.fileName();
-      if (dotFile.open()) {
-          manip_.graph()->display(dotFile.fileName().toLocal8Bit().constData());
-          QByteArray content = dotFile.readAll();
-          scene_->loadLayout(content.constData());
-          qDebug() << dotFile.fileName();
-        }
-      //*/
-//       /*
       hpp::GraphComp_var graph;
       hpp::GraphElements_var elmts;
       try {
@@ -143,7 +131,6 @@ namespace hpp {
       } catch (const hpp::Error& e) {
         qDebug () << e.msg;
       }
-      //*/
     }
 
     void HppManipulationGraphWidget::updateStatistics()

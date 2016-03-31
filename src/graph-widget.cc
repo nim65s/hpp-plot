@@ -155,14 +155,6 @@ namespace hpp {
 
     void GraphWidget::fillScene()
     {
-      /*
-      scene_->loadLayout("digraph test{node [style=filled,fillcolor=white];N1 -> N2;N2 -> N3;N3 -> N4;N4 -> N1;}");
-      connect(scene_, SIGNAL(nodeContextMenu(QGVNode*)), SLOT(nodeContextMenu(QGVNode*)));
-      connect(scene_, SIGNAL(nodeDoubleClick(QGVNode*)), SLOT(nodeDoubleClick(QGVNode*)));
-      ui->graphicsView->setScene(scene_);
-      return;
-      */
-
       //Configure scene attributes
       scene_->setGraphAttribute("label", "DEMO");
 
