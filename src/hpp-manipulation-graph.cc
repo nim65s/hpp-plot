@@ -42,18 +42,18 @@ namespace hpp {
     HppManipulationGraphWidget::HppManipulationGraphWidget (corbaServer::manipulation::Client* hpp_, QWidget *parent)
       : GraphWidget ("Manipulation graph", parent),
         manip_ (hpp_),
+        statButton_ (new QPushButton (
+              QIcon::fromTheme("view-refresh"), "&Statistics", buttonBox_)),
         updateStatsTimer_ (new QTimer (this)),
         currentId_ (-1)
     {
-      QPushButton* stats = new QPushButton (
-            QIcon::fromTheme("view-refresh"), "&Statistics", buttonBox_);
-      stats->setCheckable(true);
-      buttonBox_->layout()->addWidget(stats);
+      statButton_->setCheckable(true);
+      buttonBox_->layout()->addWidget(statButton_);
       updateStatsTimer_->setInterval(1000);
       updateStatsTimer_->setSingleShot(false);
 
       connect (updateStatsTimer_, SIGNAL (timeout()), SLOT (updateStatistics()));
-      connect (stats, SIGNAL (clicked(bool)), SLOT (startStopUpdateStats(bool)));
+      connect (statButton_, SIGNAL (clicked(bool)), SLOT (startStopUpdateStats(bool)));
       connect (scene_, SIGNAL (selectionChanged()), SLOT(selectionChanged()));
     }
 
@@ -135,48 +135,54 @@ namespace hpp {
 
     void HppManipulationGraphWidget::updateStatistics()
     {
-      foreach (QGraphicsItem* elmt, scene_->items()) {
+      try {
+        foreach (QGraphicsItem* elmt, scene_->items()) {
           QGVNode* node = dynamic_cast <QGVNode*> (elmt);
           if (node) {
-              NodeInfo& ni = nodeInfos_[node];
-              manip_->graph()->getConfigProjectorStats
-                (ni.id, ni.configStat.out(), ni.pathStat.out());
-              float sr = (ni.configStat->nbObs > 0)
-                ? (float)ni.configStat->success/(float)ni.configStat->nbObs
-                : 0.f / 0.f;
-              QString colorcode = (ni.configStat->nbObs > 0)
-                ? QColor (255,(int)(sr*255),(int)(sr*255)).name()
-                : "white";
-              const QString& fillcolor = node->getAttribute("fillcolor");
-              if (!(fillcolor == colorcode)) {
-                  node->setAttribute("fillcolor", colorcode);
-                  node->updateLayout();
-                }
-              continue;
+            NodeInfo& ni = nodeInfos_[node];
+            manip_->graph()->getConfigProjectorStats
+              (ni.id, ni.configStat.out(), ni.pathStat.out());
+            float sr = (ni.configStat->nbObs > 0)
+              ? (float)ni.configStat->success/(float)ni.configStat->nbObs
+              : 0.f / 0.f;
+            QString colorcode = (ni.configStat->nbObs > 0)
+              ? QColor (255,(int)(sr*255),(int)(sr*255)).name()
+              : "white";
+            const QString& fillcolor = node->getAttribute("fillcolor");
+            if (!(fillcolor == colorcode)) {
+              node->setAttribute("fillcolor", colorcode);
+              node->updateLayout();
             }
+            continue;
+          }
           QGVEdge* edge = dynamic_cast <QGVEdge*> (elmt);
           if (edge) {
-              EdgeInfo& ei = edgeInfos_[edge];
-              manip_->graph()->getConfigProjectorStats
-                (ei.id, ei.configStat.out(), ei.pathStat.out());
-              manip_->graph()->getEdgeStat
-                (ei.id, ei.errors.out(), ei.freqs.out());
-              float sr = (ei.configStat->nbObs > 0)
-                ? (float)ei.configStat->success/(float)ei.configStat->nbObs
-                : 0.f / 0.f;
-              QString colorcode = (ei.configStat->nbObs > 0)
-                ? QColor (255 - (int)(sr*255),0,0).name()
-                : "";
-              const QString& color = edge->getAttribute("color");
-              if (!(color == colorcode)) {
-                  edge->setAttribute("color", colorcode);
-                  edge->updateLayout();
-                }
-              continue;
+            EdgeInfo& ei = edgeInfos_[edge];
+            manip_->graph()->getConfigProjectorStats
+              (ei.id, ei.configStat.out(), ei.pathStat.out());
+            manip_->graph()->getEdgeStat
+              (ei.id, ei.errors.out(), ei.freqs.out());
+            float sr = (ei.configStat->nbObs > 0)
+              ? (float)ei.configStat->success/(float)ei.configStat->nbObs
+              : 0.f / 0.f;
+            QString colorcode = (ei.configStat->nbObs > 0)
+              ? QColor (255 - (int)(sr*255),0,0).name()
+              : "";
+            const QString& color = edge->getAttribute("color");
+            if (!(color == colorcode)) {
+              edge->setAttribute("color", colorcode);
+              edge->updateLayout();
             }
+            continue;
+          }
         }
-      scene_->update();
-      selectionChanged ();
+        scene_->update();
+        selectionChanged ();
+      } catch (const CORBA::Exception&) {
+        updateStatsTimer_->stop();
+        statButton_->setChecked(false);
+        throw;
+      }
     }
 
     void HppManipulationGraphWidget::nodeContextMenu(QGVNode *node)

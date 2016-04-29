@@ -98,6 +98,7 @@ namespace hpp {
       QMap <QGVNode*, NodeInfo> nodeInfos_;
       QMap <QGVEdge*, EdgeInfo> edgeInfos_;
 
+      QPushButton* *statButton_;
       QTimer* updateStatsTimer_;
 
       hpp::ID currentId_;
