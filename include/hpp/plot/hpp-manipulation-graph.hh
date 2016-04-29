@@ -72,6 +72,7 @@ namespace hpp {
       struct NodeInfo {
         ::hpp::ID id;
         QString constraintStr;
+        QGVNode* node;
 
         ::hpp::ConfigProjStat_var configStat, pathStat;
         NodeInfo ();

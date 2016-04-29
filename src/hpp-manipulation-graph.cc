@@ -113,15 +113,16 @@ namespace hpp {
           QGVNode* n = scene_->addNode (QString (elmts->nodes[i].name));
           NodeInfo ni;
           ni.id = elmts->nodes[i].id;
+          ni.node = n;
           nodeInfos_[n] = ni;
           n->setFlag (QGraphicsItem::ItemIsMovable, true);
           n->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
           nodes[elmts->nodes[i].id] = n;
         }
         for (std::size_t i = 0; i < elmts->edges.length(); ++i) {
+          EdgeInfo ei;
           QGVEdge* e = scene_->addEdge (nodes[elmts->edges[i].start],
               nodes[elmts->edges[i].end], "");
-          EdgeInfo ei;
           ei.name = QString::fromLocal8Bit(elmts->edges[i].name);
           ei.id = elmts->edges[i].id;
           ei.edge = e;
@@ -226,7 +227,7 @@ namespace hpp {
       bool ok;
       ::CORBA::Long w = QInputDialog::getInt(
             this, "Update edge weight",
-            tr("Edge %1 weight").arg(edge->label()),
+            tr("Edge %1 weight").arg(ei.name),
             ei.weight, 0, std::numeric_limits<int>::max(), 1,
             &ok);
       if (ok) {
