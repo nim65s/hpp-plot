@@ -94,7 +94,7 @@ namespace hpp {
       hpp::GraphComp_var graph;
       hpp::GraphElements_var components;
       client_.graph()->getGraph (graph.out(), components.out());
-      for (int i = 0; i < components->edges.length(); ++i) {
+      for (std::size_t i = 0; i < components->edges.length(); ++i) {
           try {
             hpp::floatSeq_var freq;
             hpp::floatSeqSeq_var values;
@@ -116,7 +116,7 @@ namespace hpp {
           hpp::floatSeq_var freq;
           hpp::floatSeqSeq_var values;
           client_.graph()->getHistogramValue (comp.id, freq.out(), values.out());
-          for (int i = 0; i < freq->length(); ++i) {
+          for (std::size_t i = 0; i < freq->length(); ++i) {
               (*itMap)->addData (values[i][0], values[i][1]);
             }
 
