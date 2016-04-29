@@ -2,6 +2,7 @@
 #define HPP_PLOT_HPP_MANIPULATION_GRAPH_HH
 
 #include <QAction>
+#include <QPushButton>
 
 #include <hpp/corbaserver/manipulation/client.hh>
 
@@ -99,7 +100,7 @@ namespace hpp {
       QMap <QGVNode*, NodeInfo> nodeInfos_;
       QMap <QGVEdge*, EdgeInfo> edgeInfos_;
 
-      QPushButton* *statButton_;
+      QPushButton* showWaypoints_, *statButton_;
       QTimer* updateStatsTimer_;
 
       hpp::ID currentId_;

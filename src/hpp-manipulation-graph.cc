@@ -42,13 +42,18 @@ namespace hpp {
     HppManipulationGraphWidget::HppManipulationGraphWidget (corbaServer::manipulation::Client* hpp_, QWidget *parent)
       : GraphWidget ("Manipulation graph", parent),
         manip_ (hpp_),
+        showWaypoints_ (new QPushButton (
+              QIcon::fromTheme("view-refresh"), "&Show waypoints", buttonBox_)),
         statButton_ (new QPushButton (
               QIcon::fromTheme("view-refresh"), "&Statistics", buttonBox_)),
         updateStatsTimer_ (new QTimer (this)),
         currentId_ (-1)
     {
       statButton_->setCheckable(true);
+      showWaypoints_->setCheckable(true);
+      showWaypoints_->setChecked(true);
       buttonBox_->layout()->addWidget(statButton_);
+      buttonBox_->layout()->addWidget(showWaypoints_);
       updateStatsTimer_->setInterval(1000);
       updateStatsTimer_->setSingleShot(false);
 
@@ -109,6 +114,7 @@ namespace hpp {
 
         // Add the nodes
         QMap < ::CORBA::Long, QGVNode*> nodes;
+        bool hideW = !showWaypoints_->isChecked ();
         for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
           QGVNode* n = scene_->addNode (QString (elmts->nodes[i].name));
           NodeInfo ni;
@@ -128,6 +134,10 @@ namespace hpp {
           ei.edge = e;
           edgeInfos_[e] = ei;
           updateWeight (ei);
+          if (hideW && ei.weight < 0) {
+              e->setAttribute("style", "invisible");
+              nodes[elmts->edges[i].start]->setAttribute("style", "invisible");
+            }
         }
       } catch (const hpp::Error& e) {
         qDebug () << e.msg;
