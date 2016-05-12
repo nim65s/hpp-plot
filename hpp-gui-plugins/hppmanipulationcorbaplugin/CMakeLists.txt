@@ -57,4 +57,4 @@ TARGET_LINK_LIBRARIES(${PLUGIN_NAME} "hpp-corbaserver")
 TARGET_LINK_LIBRARIES(${PLUGIN_NAME} "hpp-wholebody-step-corba")
 TARGET_LINK_LIBRARIES(${PLUGIN_NAME} "hpp-manipulation-corba")
 
-INSTALL(TARGETS ${PLUGIN_NAME} DESTINATION lib/hpp-gui-plugins)
+INSTALL(TARGETS ${PLUGIN_NAME} DESTINATION lib/gepetto-gui-plugins)

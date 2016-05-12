@@ -1,15 +1,15 @@
 #ifndef HPPMANIPULATIONPLUGIN_HH
 #define HPPMANIPULATIONPLUGIN_HH
 
-#include <hpp/gui/plugin-interface.hh>
-#include <hpp/gui/omniorb/omniorbthread.hh>
+#include <gepetto/gui/plugin-interface.hh>
+#include <gepetto/gui/omniorb/omniorbthread.hh>
 
 namespace hpp {
   namespace plot {
-    class HppManipulationPlugin : public QObject, public gui::PluginInterface
+    class HppManipulationPlugin : public QObject, public gepetto::gui::PluginInterface
     {
       Q_OBJECT
-        Q_INTERFACES (hpp::gui::PluginInterface)
+        Q_INTERFACES (gepetto::gui::PluginInterface)
 
       public:
         explicit HppManipulationPlugin ();
@@ -26,7 +26,7 @@ signals:
           QString name() const;
 
       private:
-          gui::CorbaServer* server_;
+          gepetto::gui::CorbaServer* server_;
     };
   } // namespace plot
 } // namespace hpp

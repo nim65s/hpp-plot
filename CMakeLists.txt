@@ -29,7 +29,7 @@ SET(PROJECT_DESCRIPTION "Plotting tools for HPP")
 SETUP_PROJECT()
 
 FIND_PACKAGE(Qt4 REQUIRED QtCore QtGui)
-ADD_OPTIONAL_DEPENDENCY("hpp-gui")
+ADD_OPTIONAL_DEPENDENCY("gepetto-viewer-corba")
 ADD_REQUIRED_DEPENDENCY("hpp-corbaserver")
 ADD_REQUIRED_DEPENDENCY("hpp-manipulation-corba")
 ADD_REQUIRED_DEPENDENCY("hpp-wholebody-step-corba")

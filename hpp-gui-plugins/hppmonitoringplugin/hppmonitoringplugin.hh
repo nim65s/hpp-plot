@@ -1,7 +1,7 @@
 #ifndef HPP_PLOT_HPPWIDGETSPLUGIN_HH
 #define HPP_PLOT_HPPWIDGETSPLUGIN_HH
 
-#include <hpp/gui/plugin-interface.hh>
+#include <gepetto/gui/plugin-interface.hh>
 #include <hpp/plot/hpp-manipulation-graph.hh>
 
 #include <hpp/corbaserver/manipulation/client.hh>
@@ -11,11 +11,11 @@
 
 namespace hpp {
   namespace plot {
-    class HppMonitoringPlugin : public QObject, public gui::PluginInterface,
-    public gui::CorbaInterface
+    class HppMonitoringPlugin : public QObject, public gepetto::gui::PluginInterface,
+				public gepetto::gui::CorbaInterface
     {
       Q_OBJECT
-        Q_INTERFACES (hpp::gui::PluginInterface hpp::gui::CorbaInterface)
+      Q_INTERFACES (gepetto::gui::PluginInterface gepetto::gui::CorbaInterface)
 
       public:
         explicit HppMonitoringPlugin ();

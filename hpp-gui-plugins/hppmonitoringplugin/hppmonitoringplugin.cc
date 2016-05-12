@@ -2,10 +2,10 @@
 
 #include <limits>
 
-#include <hpp/gui/mainwindow.hh>
-#include <hpp/gui/omniorb/url.hh>
+#include <gepetto/gui/mainwindow.hh>
+#include <gepetto/gui/omniorb/url.hh>
 
-using hpp::gui::MainWindow;
+using gepetto::gui::MainWindow;
 
 namespace hpp {
   namespace plot {
@@ -39,7 +39,7 @@ namespace hpp {
       cgWidget_ = new hpp::plot::HppManipulationGraphWidget (manip_, main);
       dock->setWidget(cgWidget_);
       main->insertDockWidget (dock, Qt::BottomDockWidgetArea, Qt::Horizontal);
-      dock->toggleViewAction()->setShortcut(hpp::gui::DockKeyShortcutBase + Qt::Key_G);
+      dock->toggleViewAction()->setShortcut(gepetto::gui::DockKeyShortcutBase + Qt::Key_G);
 
       hpp::plot::GraphAction* a = new hpp::plot::GraphAction (cgWidget_);
       a->setShortcut(Qt::Key_C);
@@ -76,7 +76,7 @@ namespace hpp {
         ("hpp/host", QString ()).toString ();
       QString port = MainWindow::instance ()->settings_->getSetting
         ("hpp/port", QString ()).toString ();
-      return hpp::gui::omniOrb::IIOPurl (host, port);
+      return gepetto::gui::omniOrb::IIOPurl (host, port);
     }
 
     void HppMonitoringPlugin::openConnection()
