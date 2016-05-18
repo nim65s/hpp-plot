@@ -55,6 +55,7 @@ namespace hpp {
 
     public slots:
       void updateStatistics ();
+      void showNodeOfConfiguration (const hpp::floatSeq& cfg);
 
     protected slots:
       virtual void nodeContextMenu(QGVNode* node);
@@ -99,11 +100,12 @@ namespace hpp {
       QList <GraphAction*> edgeContextMenuActions_;
       QMap <QGVNode*, NodeInfo> nodeInfos_;
       QMap <QGVEdge*, EdgeInfo> edgeInfos_;
+      QMap <hpp::ID, QGVNode*> nodes_;
 
       QPushButton* showWaypoints_, *statButton_;
       QTimer* updateStatsTimer_;
 
-      hpp::ID currentId_;
+      hpp::ID currentId_, showNodeId_;
     };
   }
 }

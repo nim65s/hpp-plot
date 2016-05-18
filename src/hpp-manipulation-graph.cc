@@ -113,7 +113,7 @@ namespace hpp {
 
 
         // Add the nodes
-        QMap < ::CORBA::Long, QGVNode*> nodes;
+        nodes_.clear();
         bool hideW = !showWaypoints_->isChecked ();
         for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
           QGVNode* n = scene_->addNode (QString (elmts->nodes[i].name));
@@ -123,12 +123,12 @@ namespace hpp {
           nodeInfos_[n] = ni;
           n->setFlag (QGraphicsItem::ItemIsMovable, true);
           n->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
-          nodes[elmts->nodes[i].id] = n;
+          nodes_[elmts->nodes[i].id] = n;
         }
         for (std::size_t i = 0; i < elmts->edges.length(); ++i) {
           EdgeInfo ei;
-          QGVEdge* e = scene_->addEdge (nodes[elmts->edges[i].start],
-              nodes[elmts->edges[i].end], "");
+          QGVEdge* e = scene_->addEdge (nodes_[elmts->edges[i].start],
+              nodes_[elmts->edges[i].end], "");
           ei.name = QString::fromLocal8Bit(elmts->edges[i].name);
           ei.id = elmts->edges[i].id;
           ei.edge = e;
@@ -136,7 +136,7 @@ namespace hpp {
           updateWeight (ei);
           if (hideW && ei.weight < 0) {
               e->setAttribute("style", "invisible");
-              nodes[elmts->edges[i].start]->setAttribute("style", "invisible");
+              nodes_[elmts->edges[i].start]->setAttribute("style", "invisible");
             }
         }
       } catch (const hpp::Error& e) {
@@ -194,6 +194,16 @@ namespace hpp {
         statButton_->setChecked(false);
         throw;
       }
+    }
+
+    void HppManipulationGraphWidget::showNodeOfConfiguration (const hpp::floatSeq& cfg)
+    {
+      if (showNodeId_ >= 0) {
+        // Do unselect
+        nodes_[showNodeId_]
+      }
+      showNodeId_ = manip_->graph()->getNode(cfg);
+      // Do select
     }
 
     void HppManipulationGraphWidget::nodeContextMenu(QGVNode *node)
