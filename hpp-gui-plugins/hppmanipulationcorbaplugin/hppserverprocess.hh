@@ -5,11 +5,11 @@
 #include <hpp/corbaserver/wholebody-step/server.hh>
 #include <hpp/corbaserver/manipulation/server.hh>
 
-#include <hpp/gui/omniorb/omniorbthread.hh>
+#include <gepetto/gui/omniorb/omniorbthread.hh>
 
 namespace hpp {
   namespace plot {
-    class HppServerProcess : public gui::ServerProcess
+    class HppServerProcess : public gepetto::gui::ServerProcess
     {
       Q_OBJECT
 

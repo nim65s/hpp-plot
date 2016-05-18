@@ -7,7 +7,7 @@
 
 #include <hppserverprocess.hh>
 
-using hpp::gui::CorbaServer;
+using gepetto::gui::CorbaServer;
 
 namespace hpp {
   namespace plot {
