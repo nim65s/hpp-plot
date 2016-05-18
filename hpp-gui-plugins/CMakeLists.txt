@@ -17,7 +17,7 @@
 # hpp-plot  If not, see
 # <http://www.gnu.org/licenses/>.
 
-IF (HPP_GUI_FOUND)
+IF (GEPETTO_VIEWER_CORBA_FOUND)
   ADD_SUBDIRECTORY(hppmonitoringplugin)
   ADD_SUBDIRECTORY(hppmanipulationcorbaplugin)
-ENDIF (HPP_GUI_FOUND)
+ENDIF (GEPETTO_VIEWER_CORBA_FOUND)
