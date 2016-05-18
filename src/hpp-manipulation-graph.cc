@@ -206,11 +206,15 @@ namespace hpp {
         nodes_[showNodeId_]->setAttribute("fillcolor", "white");
         nodes_[showNodeId_]->updateLayout ();
       }
-      manip_->graph()->getNode(cfg, showNodeId_);
-      // Do select
-      nodes_[showNodeId_]->setAttribute("fillcolor", "green");
-      nodes_[showNodeId_]->updateLayout ();
-      scene_->update();
+      try {
+        manip_->graph()->getNode(cfg, showNodeId_);
+        // Do select
+        nodes_[showNodeId_]->setAttribute("fillcolor", "green");
+        nodes_[showNodeId_]->updateLayout ();
+        scene_->update();
+      } catch (const hpp::Error& e) {
+        qDebug() << QString(e.msg);
+      }
     }
 
     void HppManipulationGraphWidget::nodeContextMenu(QGVNode *node)
