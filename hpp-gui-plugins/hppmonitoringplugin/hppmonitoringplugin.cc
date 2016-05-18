@@ -58,7 +58,14 @@ namespace hpp {
       a = new hpp::plot::GraphAction (cgWidget_);
       a->setShortcut(Qt::Key_E);
       a->setText ("&Extend current config");
-      connect (a, SIGNAL (activated(hpp::ID)), SLOT (extendCurrentConfigOn(hpp::ID)));
+      connect (a, SIGNAL (activated(hpp::ID)), SLOT (extendFromCurrentToCurrentConfigOn(hpp::ID)));
+      cgWidget_->addEdgeContextMenuAction (a);
+      cgWidget_->addAction(a);
+
+      a = new hpp::plot::GraphAction (cgWidget_);
+      a->setShortcut(Qt::Key_R);
+      a->setText ("&Extend current config to random config");
+      connect (a, SIGNAL (activated(hpp::ID)), SLOT (extendFromCurrentToRandomConfigOn(hpp::ID)));
       cgWidget_->addEdgeContextMenuAction (a);
       cgWidget_->addAction(a);
 
@@ -158,7 +165,18 @@ namespace hpp {
       return projectConfigOn (from.in(), idNode);
     }
 
-    bool HppMonitoringPlugin::extendCurrentConfigOn(hpp::ID idEdge)
+    bool HppMonitoringPlugin::extendFromCurrentToCurrentConfigOn(hpp::ID idEdge)
+    {
+      hpp::floatSeq_var from = basic_->robot()->getCurrentConfig();
+      bool success = extendConfigOn (from.in(), from.in(), idEdge);
+      if (!success) {
+        basic_->robot()->setCurrentConfig (from.in());
+        MainWindow::instance ()->requestApplyCurrentConfiguration ();
+      }
+      return success;
+    }
+
+    bool HppMonitoringPlugin::extendFromCurrentToRandomConfigOn (hpp::ID idEdge)
     {
       hpp::floatSeq_var from = basic_->robot()->getCurrentConfig();
       hpp::floatSeq_var qRand = basic_->robot ()->shootRandomConfig ();
