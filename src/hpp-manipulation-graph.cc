@@ -47,7 +47,8 @@ namespace hpp {
         statButton_ (new QPushButton (
               QIcon::fromTheme("view-refresh"), "&Statistics", buttonBox_)),
         updateStatsTimer_ (new QTimer (this)),
-        currentId_ (-1)
+        currentId_ (-1),
+        showNodeId_ (-1)
     {
       statButton_->setCheckable(true);
       showWaypoints_->setCheckable(true);
@@ -133,7 +134,9 @@ namespace hpp {
           ei.id = elmts->edges[i].id;
           ei.edge = e;
           edgeInfos_[e] = ei;
-          updateWeight (ei);
+          updateWeight (ei, true);
+          if (ei.weight < 0)
+            nodes_[elmts->edges[i].end]->setAttribute("shape", "hexagon");
           if (hideW && ei.weight < 0) {
               e->setAttribute("style", "invisible");
               nodes_[elmts->edges[i].start]->setAttribute("style", "invisible");
@@ -200,10 +203,14 @@ namespace hpp {
     {
       if (showNodeId_ >= 0) {
         // Do unselect
-        nodes_[showNodeId_]
+        nodes_[showNodeId_]->setAttribute("fillcolor", "white");
+        nodes_[showNodeId_]->updateLayout ();
       }
-      showNodeId_ = manip_->graph()->getNode(cfg);
+      manip_->graph()->getNode(cfg, showNodeId_);
       // Do select
+      nodes_[showNodeId_]->setAttribute("fillcolor", "green");
+      nodes_[showNodeId_]->updateLayout ();
+      scene_->update();
     }
 
     void HppManipulationGraphWidget::nodeContextMenu(QGVNode *node)

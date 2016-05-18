@@ -70,6 +70,8 @@ namespace hpp {
       cgWidget_->addAction(a);
 
       connect (main, SIGNAL (refresh()), cgWidget_, SLOT (updateGraph()));
+      connect (main, SIGNAL (applyCurrentConfiguration()),
+          SLOT (applyCurrentConfiguration()));
     }
 
     QString HppMonitoringPlugin::name() const
@@ -214,6 +216,12 @@ namespace hpp {
         MainWindow::instance ()->logError (QString ("Unable to project configuration. Residual error is %1").arg(error));
       }
       return success;
+    }
+
+    void HppMonitoringPlugin::applyCurrentConfiguration ()
+    {
+      hpp::floatSeq_var q = basic_->robot()->getCurrentConfig();
+      cgWidget_->showNodeOfConfiguration (q.in());
     }
   } // namespace plot
 } // namespace hpp

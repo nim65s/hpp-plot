@@ -38,6 +38,7 @@ namespace hpp {
           bool projectCurrentConfigOn(hpp::ID idNode);
           bool extendFromCurrentToCurrentConfigOn(hpp::ID idEdge);
           bool extendFromCurrentToRandomConfigOn (hpp::ID idEdge);
+          void applyCurrentConfiguration();
 
     signals:
         void projectionStatus (QString status);
