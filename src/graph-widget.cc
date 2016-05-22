@@ -87,7 +87,8 @@ namespace hpp {
       QHBoxLayout* hLayout = new QHBoxLayout (buttonBox_);
       hLayout->setMargin(0);
       algList_ = new QComboBox (this);
-      algList_->addItems (QStringList () << "dot" << "neato" << "fdp" << "sfdp" << "twopi" << "circo" << "patchwork" << "osage");
+      algList_->addItems (QStringList () << "dot" << "neato" << "fdp" << "sfdp" << "twopi" << "circo");
+             // << "patchwork" << "osage");
       QPushButton* refresh = new QPushButton (
             QIcon::fromTheme("view-refresh"), "&Refresh", buttonBox_);
       QPushButton* update = new QPushButton (
@@ -128,6 +129,7 @@ namespace hpp {
     {
       //Layout scene
       if (layoutShouldBeFreed_) scene_->freeLayout ();
+      scene_->addNodeAttribute("pin", "true")
       scene_->applyLayout("nop");
       layoutShouldBeFreed_ = true;
       scene_->render("dot");
