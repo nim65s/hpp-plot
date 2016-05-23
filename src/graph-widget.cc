@@ -119,7 +119,14 @@ namespace hpp {
       fillScene();
       scene_->applyLayout(algList_->currentText ());
       layoutShouldBeFreed_ = true;
-      scene_->render("dot");
+
+      scene_->setNodePositionAttribute();
+      scene_->setGraphAttribute("splines","spline");
+      scene_->setGraphAttribute("overlap","false");
+      scene_->addNodeAttribute("pin", "true")
+
+
+      // scene_->render("canon", "debug.dot");
 
       //Fit in view
       view_->fitInView(scene_->sceneRect(), Qt::KeepAspectRatio);
@@ -129,10 +136,8 @@ namespace hpp {
     {
       //Layout scene
       if (layoutShouldBeFreed_) scene_->freeLayout ();
-      scene_->addNodeAttribute("pin", "true")
-      scene_->applyLayout("nop");
+      scene_->applyLayout("nop2");
       layoutShouldBeFreed_ = true;
-      scene_->render("dot");
     }
 
     void GraphWidget::nodeContextMenu(QGVNode *node)

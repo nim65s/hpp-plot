@@ -100,17 +100,18 @@ namespace hpp {
 
         scene_->setGraphAttribute("label", QString (graph->name));
 
-        //      scene_->setGraphAttribute("splines", "ortho");
-        scene_->setGraphAttribute("rankdir", "LR");
-        //scene_->setGraphAttribute("concentrate", "true"); //Error !
-        scene_->setGraphAttribute("nodesep", "0.4");
+        scene_->setGraphAttribute("splines","spline");
+        // scene_->setGraphAttribute("rankdir", "LR");
+        scene_->setGraphAttribute("outputorder", "edgesfirst");
+        scene_->setGraphAttribute("nodesep", "0.5");
+        scene_->setGraphAttribute("esep","0.8");
+        scene_->setGraphAttribute("sep","1");
 
         scene_->setNodeAttribute("shape", "circle");
         scene_->setNodeAttribute("style", "filled");
         scene_->setNodeAttribute("fillcolor", "white");
-        scene_->setNodeAttribute("height", "1.2");
-        scene_->setEdgeAttribute("minlen", "3");
-        //scene_->setEdgeAttribute("dir", "both");
+        // scene_->setNodeAttribute("height", "1.2");
+        // scene_->setEdgeAttribute("minlen", "3");
 
 
         // Add the nodes
@@ -118,6 +119,7 @@ namespace hpp {
         bool hideW = !showWaypoints_->isChecked ();
         for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
           QGVNode* n = scene_->addNode (QString (elmts->nodes[i].name));
+          if (i == 0) scene_->setRootNode(n);
           NodeInfo ni;
           ni.id = elmts->nodes[i].id;
           ni.node = n;
@@ -135,11 +137,16 @@ namespace hpp {
           ei.edge = e;
           edgeInfos_[e] = ei;
           updateWeight (ei, true);
-          if (ei.weight < 0)
+          if (ei.weight < 0) {
+            e->setAttribute("weight", "3");
+            if (elmts->edges[i].start >= elmts->edges[i].end)
+              e->setAttribute("constraint", "false");
             nodes_[elmts->edges[i].end]->setAttribute("shape", "hexagon");
+          }
           if (hideW && ei.weight < 0) {
+              e->setAttribute("weight", "0");
               e->setAttribute("style", "invisible");
-              nodes_[elmts->edges[i].start]->setAttribute("style", "invisible");
+              nodes_[elmts->edges[i].end]->setAttribute("style", "invisible");
             }
         }
       } catch (const hpp::Error& e) {
