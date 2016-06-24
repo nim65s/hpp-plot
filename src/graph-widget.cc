@@ -123,7 +123,7 @@ namespace hpp {
       scene_->setNodePositionAttribute();
       scene_->setGraphAttribute("splines","spline");
       scene_->setGraphAttribute("overlap","false");
-      scene_->addNodeAttribute("pin", "true")
+      scene_->setNodeAttribute("pin", "true");
 
 
       // scene_->render("canon", "debug.dot");

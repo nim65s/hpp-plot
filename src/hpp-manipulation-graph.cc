@@ -118,36 +118,40 @@ namespace hpp {
         nodes_.clear();
         bool hideW = !showWaypoints_->isChecked ();
         for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
-          QGVNode* n = scene_->addNode (QString (elmts->nodes[i].name));
-          if (i == 0) scene_->setRootNode(n);
-          NodeInfo ni;
-          ni.id = elmts->nodes[i].id;
-          ni.node = n;
-          nodeInfos_[n] = ni;
-          n->setFlag (QGraphicsItem::ItemIsMovable, true);
-          n->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
-          nodes_[elmts->nodes[i].id] = n;
+	  if (elmts->nodes[i].id > graph->id) {
+	    QGVNode* n = scene_->addNode (QString (elmts->nodes[i].name));
+	    if (i == 0) scene_->setRootNode(n);
+	    NodeInfo ni;
+	    ni.id = elmts->nodes[i].id;
+	    ni.node = n;
+	    nodeInfos_[n] = ni;
+	    n->setFlag (QGraphicsItem::ItemIsMovable, true);
+	    n->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
+	    nodes_[elmts->nodes[i].id] = n;
+	  }
         }
         for (std::size_t i = 0; i < elmts->edges.length(); ++i) {
-          EdgeInfo ei;
-          QGVEdge* e = scene_->addEdge (nodes_[elmts->edges[i].start],
-              nodes_[elmts->edges[i].end], "");
-          ei.name = QString::fromLocal8Bit(elmts->edges[i].name);
-          ei.id = elmts->edges[i].id;
-          ei.edge = e;
-          edgeInfos_[e] = ei;
-          updateWeight (ei, true);
-          if (ei.weight < 0) {
-            e->setAttribute("weight", "3");
-            if (elmts->edges[i].start >= elmts->edges[i].end)
-              e->setAttribute("constraint", "false");
-            nodes_[elmts->edges[i].end]->setAttribute("shape", "hexagon");
-          }
-          if (hideW && ei.weight < 0) {
+	  if (elmts->edges[i].id > graph->id) {
+	    EdgeInfo ei;
+	    QGVEdge* e = scene_->addEdge (nodes_[elmts->edges[i].start],
+					  nodes_[elmts->edges[i].end], "");
+	    ei.name = QString::fromLocal8Bit(elmts->edges[i].name);
+	    ei.id = elmts->edges[i].id;
+	    ei.edge = e;
+	    edgeInfos_[e] = ei;
+	    updateWeight (ei, true);
+	    if (ei.weight < 0) {
+	      e->setAttribute("weight", "3");
+	      if (elmts->edges[i].start >= elmts->edges[i].end)
+		e->setAttribute("constraint", "false");
+	      nodes_[elmts->edges[i].end]->setAttribute("shape", "hexagon");
+	    }
+	    if (hideW && ei.weight < 0) {
               e->setAttribute("weight", "0");
               e->setAttribute("style", "invisible");
               nodes_[elmts->edges[i].end]->setAttribute("style", "invisible");
             }
+	  }
         }
       } catch (const hpp::Error& e) {
         qDebug () << e.msg;
