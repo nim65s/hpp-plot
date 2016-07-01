@@ -220,9 +220,14 @@ namespace hpp {
       try {
         manip_->graph()->getNode(cfg, showNodeId_);
         // Do select
-        nodes_[showNodeId_]->setAttribute("fillcolor", "green");
-        nodes_[showNodeId_]->updateLayout ();
-        scene_->update();
+        if (nodes_.contains(showNodeId_)) {
+          nodes_[showNodeId_]->setAttribute("fillcolor", "green");
+          nodes_[showNodeId_]->updateLayout ();
+          scene_->update();
+        } else {
+          qDebug() << "Node" << showNodeId_ << "does not exist. Refer the graph may solve the issue.";
+          showNodeId_ = 0;
+        }
       } catch (const hpp::Error& e) {
         qDebug() << QString(e.msg);
       }
