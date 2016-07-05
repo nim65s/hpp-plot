@@ -226,7 +226,7 @@ namespace hpp {
           scene_->update();
         } else {
           qDebug() << "Node" << showNodeId_ << "does not exist. Refer the graph may solve the issue.";
-          showNodeId_ = 0;
+          showNodeId_ = -1;
         }
       } catch (const hpp::Error& e) {
         qDebug() << QString(e.msg);
