@@ -138,8 +138,8 @@ namespace hpp {
 	    ei.name = QString::fromLocal8Bit(elmts->edges[i].name);
 	    ei.id = elmts->edges[i].id;
 	    ei.edge = e;
-	    edgeInfos_[e] = ei;
 	    updateWeight (ei, true);
+	    edgeInfos_[e] = ei;
 	    if (ei.weight < 0) {
 	      e->setAttribute("weight", "3");
 	      if (elmts->edges[i].start >= elmts->edges[i].end)
