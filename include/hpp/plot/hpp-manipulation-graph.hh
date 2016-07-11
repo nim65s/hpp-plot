@@ -96,6 +96,8 @@ namespace hpp {
       void updateWeight (EdgeInfo& ei, bool get = true);
       void updateWeight (EdgeInfo& ei, const ::CORBA::Long w);
 
+      QString getConstraints(hpp::ID id);
+
       QList <GraphAction*> nodeContextMenuActions_;
       QList <GraphAction*> edgeContextMenuActions_;
       QMap <QGVNode*, NodeInfo> nodeInfos_;
