@@ -393,7 +393,7 @@ namespace hpp {
       ret.append("<p><h4>Applied constraints</h4>");
       if (c->length() > 0) {
 	ret.append("<ul>");
-	for (unsigned i = 0; i < c->length(); ++i) {
+	for (unsigned i = 0; i < c->length(); i++) {
 	  ret.append(QString("<li>%1</li>").arg(c[i].in()));
 	}
 	ret.append("</ul></p>");
