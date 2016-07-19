@@ -126,6 +126,7 @@ namespace hpp {
 	    ni.id = elmts->nodes[i].id;
 	    ni.node = n;
 	    ni.constraintStr = getConstraints(ni.id);
+	    ni.lockedStr = getLockedJoints(ni.id);
 	    nodeInfos_[n] = ni;
 	    n->setFlag (QGraphicsItem::ItemIsMovable, true);
 	    n->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
@@ -142,6 +143,7 @@ namespace hpp {
 	    ei.edge = e;
 	    updateWeight (ei, true);
 	    ei.constraintStr = getConstraints(ei.id);
+	    ei.lockedStr = getLockedJoints(ei.id);
 	    edgeInfos_[e] = ei;
 	    if (ei.weight < 0) {
 	      e->setAttribute("weight", "3");
@@ -300,6 +302,7 @@ namespace hpp {
           QGVEdge* edge = dynamic_cast <QGVEdge*> (items.first());
           QString end;
 	  QString constraints;
+	  QString locked;
           if (node) {
               type = "Node";
               name = node->label();
@@ -310,6 +313,7 @@ namespace hpp {
               error = ni.configStat->error;
               nbObs = ni.configStat->nbObs;
 	      constraints = ni.constraintStr;
+	      locked = ni.lockedStr;
             } else if (edge) {
               type = "Edge";
               const EdgeInfo& ei = edgeInfos_[edge];
@@ -329,6 +333,7 @@ namespace hpp {
               }
               end.append("</ul></p>");
 	      constraints = ei.constraintStr;
+	      locked = ei.lockedStr;
             } else {
               return;
             }
@@ -339,9 +344,9 @@ namespace hpp {
               "<li>Success: %5</li>"
               "<li>Error: %6</li>"
               "<li>Nb observations: %7</li>"
-              "</ul>%8%9")
+              "</ul>%8%9%10")
             .arg (type).arg (Qt::escape (name)).arg(id).arg (weight)
-            .arg(success).arg(error).arg(nbObs).arg(end).arg(constraints));
+            .arg(success).arg(error).arg(nbObs).arg(end).arg(constraints).arg(locked));
         }
     }
 
@@ -400,6 +405,24 @@ namespace hpp {
       }
       else
 	ret.append("No constraints applied</p>");
+      return ret;
+    }
+
+    QString HppManipulationGraphWidget::getLockedJoints (hpp::ID id)
+    {
+      QString ret;
+      hpp::Names_t_var c = new hpp::Names_t;
+      manip_->graph()->getLockedJoints(id, c);
+      ret.append("<p><h4>Locked joints</h4>");
+      if (c->length() > 0) {
+	ret.append("<ul>");
+	for (unsigned i = 0; i < c->length(); i++) {
+	  ret.append(QString("<li>%1</li>").arg(c[i].in()));
+	}
+	ret.append("</ul></p>");
+      }
+      else
+	ret.append("No locked joints</p>");
       return ret;
     }
   }
