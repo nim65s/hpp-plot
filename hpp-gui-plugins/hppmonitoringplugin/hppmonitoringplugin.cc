@@ -40,6 +40,7 @@ namespace hpp {
       dock->setWidget(cgWidget_);
       main->insertDockWidget (dock, Qt::BottomDockWidgetArea, Qt::Horizontal);
       dock->toggleViewAction()->setShortcut(gepetto::gui::DockKeyShortcutBase + Qt::Key_G);
+      main->registerShortcut(dock->windowTitle(), "Toggle view", dock->toggleViewAction());
 
       hpp::plot::GraphAction* a = new hpp::plot::GraphAction (cgWidget_);
       a->setShortcut(Qt::Key_C);
@@ -47,6 +48,7 @@ namespace hpp {
       connect (a, SIGNAL (activated(hpp::ID)), SLOT (projectCurrentConfigOn(hpp::ID)));
       cgWidget_->addNodeContextMenuAction (a);
       cgWidget_->addAction(a);
+      main->registerShortcut(dock->windowTitle(), a);
 
       a = new hpp::plot::GraphAction (cgWidget_);
       a->setShortcut(Qt::Key_G);
@@ -54,6 +56,7 @@ namespace hpp {
       connect (a, SIGNAL (activated(hpp::ID)), SLOT (projectRandomConfigOn(hpp::ID)));
       cgWidget_->addNodeContextMenuAction (a);
       cgWidget_->addAction(a);
+      main->registerShortcut(dock->windowTitle(), a);
 
       a = new hpp::plot::GraphAction (cgWidget_);
       a->setShortcut(Qt::Key_E);
@@ -61,6 +64,7 @@ namespace hpp {
       connect (a, SIGNAL (activated(hpp::ID)), SLOT (extendFromCurrentToCurrentConfigOn(hpp::ID)));
       cgWidget_->addEdgeContextMenuAction (a);
       cgWidget_->addAction(a);
+      main->registerShortcut(dock->windowTitle(), a);
 
       a = new hpp::plot::GraphAction (cgWidget_);
       a->setShortcut(Qt::Key_R);
@@ -68,6 +72,7 @@ namespace hpp {
       connect (a, SIGNAL (activated(hpp::ID)), SLOT (extendFromCurrentToRandomConfigOn(hpp::ID)));
       cgWidget_->addEdgeContextMenuAction (a);
       cgWidget_->addAction(a);
+      main->registerShortcut(dock->windowTitle(), a);
 
       connect (main, SIGNAL (refresh()), cgWidget_, SLOT (updateGraph()));
       connect (main, SIGNAL (applyCurrentConfiguration()),
