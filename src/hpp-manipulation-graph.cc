@@ -302,9 +302,6 @@ namespace hpp {
               const NodeInfo& ni = nodeInfos_[node];
               id = ni.id;
               currentId_ = id;
-              success = ni.configStat->success;
-              error = ni.configStat->error;
-              nbObs = ni.configStat->nbObs;
             } else if (edge) {
               type = "Edge";
               const EdgeInfo& ei = edgeInfos_[edge];
@@ -312,9 +309,6 @@ namespace hpp {
               id = ei.id;
               currentId_ = id;
               weight = QString ("<li>Weight: %1</li>").arg(ei.weight);
-              success = ei.configStat->success;
-              error = ei.configStat->error;
-              nbObs = ei.configStat->nbObs;
               end = "<p>Extension results<ul>";
               for (std::size_t i = 0; i < std::min(ei.errors->length(),ei.freqs->length()); ++i) {
                 end.append (
@@ -330,12 +324,9 @@ namespace hpp {
             QString ("<h4>%1 %2</h4><ul>"
               "<li>Id: %3</li>"
               "%4"
-              "<li>Success: %5</li>"
-              "<li>Error: %6</li>"
-              "<li>Nb observations: %7</li>"
               "</ul>%8")
             .arg (type).arg (Qt::escape (name)).arg(id).arg (weight)
-            .arg(success).arg(error).arg(nbObs).arg(end));
+            .arg(end));
         }
     }
 
