@@ -140,6 +140,8 @@ namespace hpp {
 					  nodes_[elmts->edges[i].end], "");
 	    ei.name = QString::fromLocal8Bit(elmts->edges[i].name);
 	    ei.id = elmts->edges[i].id;
+            CORBA::String_var cnname = manip_->graph()->getContainingNode(ei.id);
+            ei.containingNodeName = QString::fromLocal8Bit((char*)cnname);
 	    ei.edge = e;
 	    updateWeight (ei, true);
 	    ei.constraintStr = getConstraints(ei.id);
@@ -326,6 +328,7 @@ namespace hpp {
                     .arg(        ei.freqs.in()[i]  ));
               }
               end.append("</ul></p>");
+              end.append(QString("<p><h4>Containing node</h4>\n%1</p>").arg(ei.containingNodeName));
 	      constraints = ei.constraintStr;
 	      locked = ei.lockedStr;
             } else {
@@ -353,7 +356,8 @@ namespace hpp {
       initConfigProjStat (pathStat.out());
     }
 
-    HppManipulationGraphWidget::EdgeInfo::EdgeInfo () : id (-1), edge (NULL)
+    HppManipulationGraphWidget::EdgeInfo::EdgeInfo ()
+      : id (-1), edge (NULL)
     {
       initConfigProjStat (configStat.out());
       initConfigProjStat (pathStat.out());

@@ -82,7 +82,7 @@ namespace hpp {
       };
       struct EdgeInfo {
         ::hpp::ID id;
-        QString name;
+        QString name, containingNodeName;
         ::CORBA::Long weight;
         QString constraintStr;
         QString lockedStr;
