@@ -24,7 +24,7 @@ namespace hpp {
     {
       setTransformationAnchor (AnchorUnderMouse);
       setDragMode (ScrollHandDrag);
-      setBackgroundBrush (QBrush (Qt::white, Qt::SolidPattern));
+      setBackgroundBrush (QBrush (Qt::lightGray, Qt::SolidPattern));
     }
 
     void GraphView::wheelEvent(QWheelEvent *event)
