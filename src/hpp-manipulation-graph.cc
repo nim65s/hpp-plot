@@ -174,6 +174,8 @@ namespace hpp {
             NodeInfo& ni = nodeInfos_[node];
             manip_->graph()->getConfigProjectorStats
               (ni.id, ni.configStat.out(), ni.pathStat.out());
+            ni.freq = manip_->graph()->getFrequencyOfNodeInRoadmap(
+                ni.id, ni.freqPerCC.out());
             float sr = (ni.configStat->nbObs > 0)
               ? (float)ni.configStat->success/(float)ni.configStat->nbObs
               : 0.f / 0.f;
@@ -313,6 +315,12 @@ namespace hpp {
               currentId_ = id;
 	      constraints = ni.constraintStr;
 	      locked = ni.lockedStr;
+              end = QString("<p><h4>Nb node in roadmap:</h4> %1</p>").arg(ni.freq);
+              end.append("<p><h4>Nb node in roadmap per connected component</h4>\n");
+              for (std::size_t i = 0; i < ni.freqPerCC->length(); ++i) {
+                end.append (QString (" %1,").arg(ni.freqPerCC.in()[i]));
+              }
+              end.append("</p>");
             } else if (edge) {
               type = "Edge";
               const EdgeInfo& ei = edgeInfos_[edge];
@@ -350,7 +358,8 @@ namespace hpp {
       else       updateStatsTimer_->stop ();
     }
 
-    HppManipulationGraphWidget::NodeInfo::NodeInfo () : id (-1)
+    HppManipulationGraphWidget::NodeInfo::NodeInfo ()
+      : id (-1), freq (0), freqPerCC (new ::hpp::intSeq())
     {
       initConfigProjStat (configStat.out());
       initConfigProjStat (pathStat.out());

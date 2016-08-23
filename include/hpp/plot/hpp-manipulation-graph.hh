@@ -78,6 +78,8 @@ namespace hpp {
         QGVNode* node;
 
         ::hpp::ConfigProjStat_var configStat, pathStat;
+        ::CORBA::Long freq;
+        ::hpp::intSeq_var freqPerCC;
         NodeInfo ();
       };
       struct EdgeInfo {
