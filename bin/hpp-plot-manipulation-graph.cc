@@ -27,7 +27,7 @@ int main (int argc, char** argv)
   QApplication a(argc, argv);
   QMainWindow window;
 
-  hpp::corbaServer::manipulation::Client client (0,NULL);
+  hpp::corbaServer::manipulation::Client client (argc,argv);
   client.connect();
   hpp::plot::HppManipulationGraphWidget w (&client, NULL);
   w.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
