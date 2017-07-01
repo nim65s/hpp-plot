@@ -34,7 +34,6 @@ FIND_PACKAGE(Qt4 REQUIRED QtCore QtGui)
 ADD_OPTIONAL_DEPENDENCY("gepetto-viewer-corba")
 ADD_REQUIRED_DEPENDENCY("hpp-corbaserver")
 ADD_REQUIRED_DEPENDENCY("hpp-manipulation-corba")
-ADD_REQUIRED_DEPENDENCY("hpp-wholebody-step-corba")
 ADD_REQUIRED_DEPENDENCY("QGVCore")
 
 

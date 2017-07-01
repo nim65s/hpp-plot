@@ -2,7 +2,6 @@
 #define HPPSERVERPROCESS_HH
 
 #include <hpp/corbaserver/server.hh>
-#include <hpp/corbaserver/wholebody-step/server.hh>
 #include <hpp/corbaserver/manipulation/server.hh>
 
 #include <gepetto/gui/omniorb/omniorbthread.hh>
@@ -15,7 +14,7 @@ namespace hpp {
 
       public:
         HppServerProcess ( hpp::corbaServer::Server* basic,
-            hpp::wholebodyStep::Server* wbs, hpp::manipulation::Server* manip);
+                           hpp::manipulation::Server* manip);
 
         ~HppServerProcess ();
 
@@ -25,7 +24,6 @@ namespace hpp {
 
       private:
         hpp::corbaServer::Server*   basic_;
-        hpp::wholebodyStep::Server* wbs_;
         hpp::manipulation::Server*  manip_;
     };
   } // namespace plot
