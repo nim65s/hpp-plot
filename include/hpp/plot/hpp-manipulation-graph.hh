@@ -71,6 +71,11 @@ namespace hpp {
     private:
       corbaServer::manipulation::Client* manip_;
 
+      struct GraphInfo {
+        ::hpp::ID id;
+        QString constraintStr;
+        QString lockedStr;
+      } graphInfo_;
       struct NodeInfo {
         ::hpp::ID id;
         QString constraintStr;

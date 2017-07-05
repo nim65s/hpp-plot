@@ -51,6 +51,7 @@ namespace hpp {
         currentId_ (-1),
         showNodeId_ (-1)
     {
+      graphInfo_.id = -1;
       statButton_->setCheckable(true);
       showWaypoints_->setCheckable(true);
       showWaypoints_->setChecked(true);
@@ -114,6 +115,9 @@ namespace hpp {
         // scene_->setNodeAttribute("height", "1.2");
         // scene_->setEdgeAttribute("minlen", "3");
 
+        graphInfo_.id = graph->id;
+        graphInfo_.constraintStr = getConstraints(graphInfo_.id);
+        graphInfo_.lockedStr = getLockedJoints(graphInfo_.id);
 
         // Add the nodes
         nodes_.clear();
@@ -296,52 +300,61 @@ namespace hpp {
     {
       QList <QGraphicsItem*> items = scene_->selectedItems();
       currentId_ = -1;
-      if (items.size() == 0) {
-          elmtInfo_->setText ("No info");
-        }
+
+      QString type, name; ::hpp::ID id;
+      QString end;
+      QString constraints;
+      QString locked;
       QString weight;
-      if (items.size() == 1) {
-          QString type, name; ::hpp::ID id;
-          QGVNode* node = dynamic_cast <QGVNode*> (items.first());
-          QGVEdge* edge = dynamic_cast <QGVEdge*> (items.first());
-          QString end;
-	  QString constraints;
-	  QString locked;
-          if (node) {
-              type = "Node";
-              name = node->label();
-              const NodeInfo& ni = nodeInfos_[node];
-              id = ni.id;
-              currentId_ = id;
-	      constraints = ni.constraintStr;
-	      locked = ni.lockedStr;
-              end = QString("<p><h4>Nb node in roadmap:</h4> %1</p>").arg(ni.freq);
-              end.append("<p><h4>Nb node in roadmap per connected component</h4>\n");
-              for (std::size_t i = 0; i < ni.freqPerCC->length(); ++i) {
-                end.append (QString (" %1,").arg(ni.freqPerCC.in()[i]));
-              }
-              end.append("</p>");
-            } else if (edge) {
-              type = "Edge";
-              const EdgeInfo& ei = edgeInfos_[edge];
-              name = ei.name;
-              id = ei.id;
-              currentId_ = id;
-              weight = QString ("<li>Weight: %1</li>").arg(ei.weight);
-              end = "<p>Extension results<ul>";
-              for (std::size_t i = 0; i < std::min(ei.errors->length(),ei.freqs->length()); ++i) {
-                end.append (
-                    QString ("<li>%1: %2</li>")
-                    .arg(QString(ei.errors.in()[i]))
-                    .arg(        ei.freqs.in()[i]  ));
-              }
-              end.append("</ul></p>");
-              end.append(QString("<p><h4>Containing node</h4>\n%1</p>").arg(ei.containingNodeName));
-	      constraints = ei.constraintStr;
-	      locked = ei.lockedStr;
-            } else {
-              return;
-            }
+
+      if (items.size() == 0) {
+        if (graphInfo_.id < 0) {
+          elmtInfo_->setText ("No info");
+          return;
+        }
+        type = "Graph";
+        id = graphInfo_.id;
+        constraints = graphInfo_.constraintStr;
+        locked = graphInfo_.lockedStr;
+      } else if (items.size() == 1) {
+        QGVNode* node = dynamic_cast <QGVNode*> (items.first());
+        QGVEdge* edge = dynamic_cast <QGVEdge*> (items.first());
+        if (node) {
+          type = "Node";
+          name = node->label();
+          const NodeInfo& ni = nodeInfos_[node];
+          id = ni.id;
+          currentId_ = id;
+          constraints = ni.constraintStr;
+          locked = ni.lockedStr;
+          end = QString("<p><h4>Nb node in roadmap:</h4> %1</p>").arg(ni.freq);
+          end.append("<p><h4>Nb node in roadmap per connected component</h4>\n");
+          for (std::size_t i = 0; i < ni.freqPerCC->length(); ++i) {
+            end.append (QString (" %1,").arg(ni.freqPerCC.in()[i]));
+          }
+          end.append("</p>");
+        } else if (edge) {
+          type = "Edge";
+          const EdgeInfo& ei = edgeInfos_[edge];
+          name = ei.name;
+          id = ei.id;
+          currentId_ = id;
+          weight = QString ("<li>Weight: %1</li>").arg(ei.weight);
+          end = "<p>Extension results<ul>";
+          for (std::size_t i = 0; i < std::min(ei.errors->length(),ei.freqs->length()); ++i) {
+            end.append (
+                QString ("<li>%1: %2</li>")
+                .arg(QString(ei.errors.in()[i]))
+                .arg(        ei.freqs.in()[i]  ));
+          }
+          end.append("</ul></p>");
+          end.append(QString("<p><h4>Containing node</h4>\n%1</p>").arg(ei.containingNodeName));
+          constraints = ei.constraintStr;
+          locked = ei.lockedStr;
+        } else {
+          return;
+        }
+      }
           elmtInfo_->setText (
             QString ("<h4>%1 %2</h4><ul>"
               "<li>Id: %3</li>"
@@ -349,7 +362,6 @@ namespace hpp {
               "</ul>%5%6%7")
             .arg (type).arg (Qt::escape (name)).arg(id).arg (weight)
             .arg(end).arg(constraints).arg(locked));
-        }
     }
 
     void HppManipulationGraphWidget::startStopUpdateStats(bool start)
