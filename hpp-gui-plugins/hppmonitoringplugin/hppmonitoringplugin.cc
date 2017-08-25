@@ -59,6 +59,14 @@ namespace hpp {
       main->registerShortcut(dock->windowTitle(), a);
 
       a = new hpp::plot::GraphAction (cgWidget_);
+      a->setShortcut(Qt::Key_T);
+      a->setText ("Set as &target state");
+      connect (a, SIGNAL (activated(hpp::ID)), SLOT (setTargetState(hpp::ID)));
+      cgWidget_->addNodeContextMenuAction (a);
+      cgWidget_->addAction(a);
+      main->registerShortcut(dock->windowTitle(), a);
+
+      a = new hpp::plot::GraphAction (cgWidget_);
       a->setShortcut(Qt::Key_E);
       a->setText ("&Extend current config");
       connect (a, SIGNAL (activated(hpp::ID)), SLOT (extendFromCurrentToCurrentConfigOn(hpp::ID)));
@@ -170,6 +178,11 @@ namespace hpp {
     {
       hpp::floatSeq_var from = basic_->robot()->getCurrentConfig();
       return projectConfigOn (from.in(), idNode);
+    }
+
+    void HppMonitoringPlugin::setTargetState(ID idNode)
+    {
+      manip_->problem()->setTargetState(idNode);
     }
 
     bool HppMonitoringPlugin::extendFromCurrentToCurrentConfigOn(hpp::ID idEdge)

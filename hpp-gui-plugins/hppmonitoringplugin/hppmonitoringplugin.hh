@@ -36,6 +36,7 @@ namespace hpp {
         public slots:
           void projectRandomConfigOn(hpp::ID idNode);
           bool projectCurrentConfigOn(hpp::ID idNode);
+          void setTargetState (hpp::ID idEdge);
           bool extendFromCurrentToCurrentConfigOn(hpp::ID idEdge);
           bool extendFromCurrentToRandomConfigOn (hpp::ID idEdge);
           void applyCurrentConfiguration();
