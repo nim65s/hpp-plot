@@ -85,6 +85,10 @@ namespace hpp {
       connect (main, SIGNAL (refresh()), cgWidget_, SLOT (updateGraph()));
       connect (main, SIGNAL (applyCurrentConfiguration()),
           SLOT (applyCurrentConfiguration()));
+
+      main->connectSignal (SIGNAL(appliedConfigAtParam(int,double)), 
+                           SLOT(appliedConfigAtParam(int,double)),
+                           this);
     }
 
     QString HppMonitoringPlugin::name() const
@@ -240,6 +244,12 @@ namespace hpp {
     {
       hpp::floatSeq_var q = basic_->robot()->getCurrentConfig();
       cgWidget_->showNodeOfConfiguration (q.in());
+    }
+
+    void HppMonitoringPlugin::appliedConfigAtParam (int pid, double param)
+    {
+      hpp::ID id = manip_->problem()->edgeAtParam(pid, param);
+      cgWidget_->showEdge (id);
     }
   } // namespace plot
 } // namespace hpp

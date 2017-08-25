@@ -49,7 +49,8 @@ namespace hpp {
               QIcon::fromTheme("view-refresh"), "&Statistics", buttonBox_)),
         updateStatsTimer_ (new QTimer (this)),
         currentId_ (-1),
-        showNodeId_ (-1)
+        showNodeId_ (-1),
+        showEdgeId_ (-1)
     {
       graphInfo_.id = -1;
       statButton_->setCheckable(true);
@@ -121,6 +122,7 @@ namespace hpp {
 
         // Add the nodes
         nodes_.clear();
+        edges_.clear();
         bool hideW = !showWaypoints_->isChecked ();
         for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
 	  if (elmts->nodes[i].id > graph->id) {
@@ -162,6 +164,7 @@ namespace hpp {
               e->setAttribute("style", "invisible");
               nodes_[elmts->edges[i].end]->setAttribute("style", "invisible");
             }
+            edges_[ei.id] = e;
 	  }
         }
       } catch (const hpp::Error& e) {
@@ -243,6 +246,25 @@ namespace hpp {
         }
       } catch (const hpp::Error& e) {
         qDebug() << QString(e.msg);
+      }
+    }
+
+    void HppManipulationGraphWidget::showEdge (const hpp::ID& edgeId)
+    {
+      if (showEdgeId_ >= 0) {
+        // Do unselect
+        edges_[showEdgeId_]->setAttribute("color", "");
+        edges_[showEdgeId_]->updateLayout ();
+      }
+      showEdgeId_ = edgeId;
+      // Do select
+      if (edges_.contains(showEdgeId_)) {
+        edges_[showEdgeId_]->setAttribute("color", "green");
+        edges_[showEdgeId_]->updateLayout ();
+        scene_->update();
+      } else {
+        qDebug() << "Edge" << showEdgeId_ << "does not exist. Refreshing the graph may solve the issue.";
+        showEdgeId_ = -1;
       }
     }
 

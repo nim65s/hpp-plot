@@ -49,6 +49,7 @@ namespace hpp {
       void client (corbaServer::manipulation::Client* hpp);
 
       bool selectionID (hpp::ID& id);
+      void showEdge (const hpp::ID& edgeId);
 
     protected:
       void fillScene ();
@@ -113,11 +114,12 @@ namespace hpp {
       QMap <QGVNode*, NodeInfo> nodeInfos_;
       QMap <QGVEdge*, EdgeInfo> edgeInfos_;
       QMap <hpp::ID, QGVNode*> nodes_;
+      QMap <hpp::ID, QGVEdge*> edges_;
 
       QPushButton* showWaypoints_, *statButton_;
       QTimer* updateStatsTimer_;
 
-      hpp::ID currentId_, showNodeId_;
+      hpp::ID currentId_, showNodeId_, showEdgeId_;
     };
   }
 }

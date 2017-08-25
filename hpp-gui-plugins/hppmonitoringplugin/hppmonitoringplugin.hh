@@ -40,6 +40,7 @@ namespace hpp {
           bool extendFromCurrentToCurrentConfigOn(hpp::ID idEdge);
           bool extendFromCurrentToRandomConfigOn (hpp::ID idEdge);
           void applyCurrentConfiguration();
+          void appliedConfigAtParam (int pid, double param);
 
     signals:
         void projectionStatus (QString status);
