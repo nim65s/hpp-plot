@@ -124,8 +124,43 @@ namespace hpp {
         nodes_.clear();
         edges_.clear();
         bool hideW = !showWaypoints_->isChecked ();
+        QMap <hpp::ID, bool> nodeIsWaypoint;
+        QMap <hpp::ID, bool> edgeVisible;
+        
+        // initialize node counters.
         for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
 	  if (elmts->nodes[i].id > graph->id) {
+            ::hpp::ID id = elmts->nodes[i].id;
+            nodeIsWaypoint[id] = false;
+	  }
+        }
+
+        // Find what edge are visible and count the nodes accordingly.
+        for (std::size_t i = 0; i < elmts->edges.length(); ++i) {
+	  if (elmts->edges[i].id > graph->id) {
+
+            ::hpp::ID id = elmts->edges[i].id;
+            ::CORBA::Long weight = manip_->graph()->getWeight(id);
+
+            for (std::size_t k = 0; k < elmts->edges[i].waypoints.length(); ++k)
+              nodeIsWaypoint[elmts->edges[i].waypoints[k]] = true;
+
+            bool hasWaypoints = elmts->edges[i].waypoints.length() > 0;
+            // If    show Waypoint and this is not a waypoint edge
+            //    or hide Waypoint and this is not a transition inside a WaypointEdge
+            edgeVisible[id] = (!hideW && !hasWaypoints)
+                           || ( hideW && weight >= 0);
+	  }
+        }
+
+        for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
+	  if (elmts->nodes[i].id > graph->id) {
+            Q_ASSERT ( nodeIsWaypoint.contains(elmts->nodes[i].id) );
+
+            if ( hideW && nodeIsWaypoint[elmts->nodes[i].id]) {
+              qDebug () << "Ignoring node" << elmts->nodes[i].name;
+              continue;
+            }
 	    QGVNode* n = scene_->addNode (QString (elmts->nodes[i].name));
 	    if (i == 0) scene_->setRootNode(n);
 	    NodeInfo ni;
@@ -137,10 +172,20 @@ namespace hpp {
 	    n->setFlag (QGraphicsItem::ItemIsMovable, true);
 	    n->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
 	    nodes_[elmts->nodes[i].id] = n;
-	  }
+
+            if (nodeIsWaypoint[ni.id])
+              n->setAttribute("shape", "hexagon");
+          }
         }
         for (std::size_t i = 0; i < elmts->edges.length(); ++i) {
 	  if (elmts->edges[i].id > graph->id) {
+            Q_ASSERT ( edgeVisible.contains(elmts->edges[i].id)
+                &&     nodeIsWaypoint.contains(elmts->edges[i].start)
+                &&     nodeIsWaypoint.contains(elmts->edges[i].end));
+            if ( !edgeVisible[elmts->edges[i].id]) {
+              qDebug () << "Ignoring edge" << elmts->edges[i].name;
+              continue;
+            }
 	    EdgeInfo ei;
 	    QGVEdge* e = scene_->addEdge (nodes_[elmts->edges[i].start],
 					  nodes_[elmts->edges[i].end], "");
@@ -153,16 +198,12 @@ namespace hpp {
 	    ei.constraintStr = getConstraints(ei.id);
 	    ei.lockedStr = getLockedJoints(ei.id);
 	    edgeInfos_[e] = ei;
+
+            // If this is a transition inside a WaypointEdge
 	    if (ei.weight < 0) {
 	      e->setAttribute("weight", "3");
 	      if (elmts->edges[i].start >= elmts->edges[i].end)
 		e->setAttribute("constraint", "false");
-	      nodes_[elmts->edges[i].end]->setAttribute("shape", "hexagon");
-	    }
-	    if (hideW && ei.weight < 0) {
-              e->setAttribute("weight", "0");
-              e->setAttribute("style", "invisible");
-              nodes_[elmts->edges[i].end]->setAttribute("style", "invisible");
             }
             edges_[ei.id] = e;
 	  }
