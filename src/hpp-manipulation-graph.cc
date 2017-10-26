@@ -55,7 +55,7 @@ namespace hpp {
       graphInfo_.id = -1;
       statButton_->setCheckable(true);
       showWaypoints_->setCheckable(true);
-      showWaypoints_->setChecked(true);
+      showWaypoints_->setChecked(false);
       buttonBox_->layout()->addWidget(statButton_);
       buttonBox_->layout()->addWidget(showWaypoints_);
       updateStatsTimer_->setInterval(1000);
