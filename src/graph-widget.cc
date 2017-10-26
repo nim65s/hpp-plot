@@ -116,6 +116,10 @@ namespace hpp {
       //Layout scene
       if (layoutShouldBeFreed_) scene_->freeLayout ();
       scene_->clear();
+      QRectF rect = view_->sceneRect();
+      rect.setWidth(0);
+      rect.setHeight(0);
+      view_->setSceneRect(rect);
       fillScene();
       scene_->applyLayout(algList_->currentText ());
       layoutShouldBeFreed_ = true;
