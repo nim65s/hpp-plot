@@ -129,7 +129,7 @@ namespace hpp {
       // scene_->render("canon", "debug.dot");
 
       //Fit in view
-      view_->fitInView(scene_->sceneRect(), Qt::KeepAspectRatio);
+      // view_->fitInView(scene_->sceneRect(), Qt::KeepAspectRatio);
     }
 
     void GraphWidget::updateEdges()

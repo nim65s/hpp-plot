@@ -195,9 +195,18 @@ namespace hpp {
             ei.containingNodeName = QString::fromLocal8Bit((char*)cnname);
 	    ei.edge = e;
 	    updateWeight (ei, true);
-	    ei.constraintStr = getConstraints(ei.id);
-	    ei.lockedStr = getLockedJoints(ei.id);
-	    edgeInfos_[e] = ei;
+
+            if (elmts->edges[i].waypoints.length() > 0) {
+              ei.constraintStr = tr("<p><h4>Waypoint transition</h4>"
+                  "This transition has %1 waypoints.<br/>"
+                  "To see the constraints of the transition inside,<br/>"
+                  "re-draw the graph after enabling \"Show waypoints\"</p>")
+                .arg(elmts->edges[i].waypoints.length());
+              ei.lockedStr = "";
+            } else {
+              ei.constraintStr = getConstraints(ei.id);
+              ei.lockedStr = getLockedJoints(ei.id);
+            }
 
             // If this is a transition inside a WaypointEdge
 	    if (ei.weight < 0) {
@@ -205,6 +214,8 @@ namespace hpp {
 	      if (elmts->edges[i].start >= elmts->edges[i].end)
 		e->setAttribute("constraint", "false");
             }
+
+	    edgeInfos_[e] = ei;
             edges_[ei.id] = e;
 	  }
         }
