@@ -206,6 +206,9 @@ namespace hpp {
             } else {
               ei.constraintStr = getConstraints(ei.id);
               ei.lockedStr = getLockedJoints(ei.id);
+
+              if (manip_->graph()->isShort(ei.id))
+                ei.lockedStr += "<h4>Short</h4>";
             }
 
             // If this is a transition inside a WaypointEdge
@@ -315,7 +318,6 @@ namespace hpp {
         edges_[showEdgeId_]->updateLayout ();
         scene_->update();
       } else {
-        qDebug() << "Edge" << showEdgeId_ << "does not exist. Refreshing the graph may solve the issue.";
         showEdgeId_ = -1;
       }
     }
