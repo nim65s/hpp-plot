@@ -38,7 +38,7 @@ namespace hpp {
       dock = new QDockWidget ("Constraint &Graph", main);
       cgWidget_ = new hpp::plot::HppManipulationGraphWidget (manip_, main);
       dock->setWidget(cgWidget_);
-      main->insertDockWidget (dock, Qt::BottomDockWidgetArea, Qt::Horizontal);
+      main->insertDockWidget (dock, Qt::RightDockWidgetArea, Qt::Horizontal);
       dock->toggleViewAction()->setShortcut(gepetto::gui::DockKeyShortcutBase + Qt::Key_G);
       main->registerShortcut(dock->windowTitle(), "Toggle view", dock->toggleViewAction());
 
