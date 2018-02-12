@@ -46,6 +46,7 @@ namespace hpp {
       QWidget* buttonBox_;
       QTextEdit* elmtInfo_;
       QTextEdit* loggingInfo_;
+      QTextEdit* constraintInfo_;
 
     private:
       GraphView* view_;

@@ -67,6 +67,14 @@ namespace hpp {
       main->registerShortcut(dock->windowTitle(), a);
 
       a = new hpp::plot::GraphAction (cgWidget_);
+      // a->setShortcut(Qt::Key_C);
+      a->setText ("Display &node constraints");
+      cgWidget_->connect (a, SIGNAL (activated(hpp::ID)), SLOT (displayNodeConstraint(hpp::ID)));
+      cgWidget_->addNodeContextMenuAction (a);
+      // cgWidget_->addAction(a);
+      // main->registerShortcut(dock->windowTitle(), a);
+
+      a = new hpp::plot::GraphAction (cgWidget_);
       a->setShortcut(Qt::Key_E);
       a->setText ("&Extend current config");
       connect (a, SIGNAL (activated(hpp::ID)), SLOT (extendFromCurrentToCurrentConfigOn(hpp::ID)));
@@ -81,6 +89,22 @@ namespace hpp {
       cgWidget_->addEdgeContextMenuAction (a);
       cgWidget_->addAction(a);
       main->registerShortcut(dock->windowTitle(), a);
+
+      a = new hpp::plot::GraphAction (cgWidget_);
+      // a->setShortcut(Qt::Key_C);
+      a->setText ("Display edge &constraints");
+      cgWidget_->connect (a, SIGNAL (activated(hpp::ID)), SLOT (displayEdgeConstraint(hpp::ID)));
+      cgWidget_->addEdgeContextMenuAction (a);
+      cgWidget_->addAction(a);
+      main->registerShortcut(dock->windowTitle(), a);
+
+      a = new hpp::plot::GraphAction (cgWidget_);
+      // a->setShortcut(Qt::Key_T);
+      a->setText ("Display edge &target constraints");
+      cgWidget_->connect (a, SIGNAL (activated(hpp::ID)), SLOT (displayEdgeTargetConstraint(hpp::ID)));
+      cgWidget_->addEdgeContextMenuAction (a);
+      // cgWidget_->addAction(a);
+      // main->registerShortcut(dock->windowTitle(), a);
 
       connect (main, SIGNAL (refresh()), cgWidget_, SLOT (updateGraph()));
       connect (main, SIGNAL (applyCurrentConfiguration()),
@@ -110,7 +134,7 @@ namespace hpp {
       closeConnection ();
       basic_ = new hpp::corbaServer::Client (0,0);
       manip_ = new hpp::corbaServer::manipulation::Client (0,0);
-      QByteArray iiop = getIIOPurl ().toAscii();
+      QByteArray iiop = getIIOPurl ().toLatin1();
       basic_->connect (iiop.constData ());
       manip_->connect (iiop.constData ());
       if (cgWidget_) cgWidget_->client (manip_);
@@ -254,4 +278,6 @@ namespace hpp {
   } // namespace plot
 } // namespace hpp
 
+#ifdef USE_QT4
 Q_EXPORT_PLUGIN2 (hppmonitoringplugin, hpp::plot::HppMonitoringPlugin)
+#endif // USE_QT4

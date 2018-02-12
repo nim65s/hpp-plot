@@ -43,6 +43,7 @@ namespace hpp {
         buttonBox_ (new QWidget ()),
         elmtInfo_ (new QTextEdit ()),
         loggingInfo_ (new QTextEdit ()),
+        constraintInfo_ (new QTextEdit ()),
         view_ (new GraphView (0)),
         layoutShouldBeFreed_ (false)
     {
@@ -66,6 +67,7 @@ namespace hpp {
       QVBoxLayout* infoL = new QVBoxLayout ();
       infoL->addWidget(elmtInfo_);
       // infoL->addWidget(loggingInfo_);
+      infoL->addWidget(constraintInfo_);
       infoW->setLayout(infoL);
       splitter->addWidget(infoW);
       splitter->addWidget(view_);

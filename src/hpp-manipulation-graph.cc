@@ -339,7 +339,32 @@ namespace hpp {
 
     void HppManipulationGraphWidget::nodeDoubleClick(QGVNode *node)
     {
-      QMessageBox::information(this, tr("Node double clicked"), tr("Node %1").arg(node->label()));
+      const NodeInfo& ni = nodeInfos_[node];
+      displayNodeConstraint (ni.id);
+    }
+
+    void HppManipulationGraphWidget::displayNodeConstraint(hpp::ID id)
+    {
+      CORBA::String_var str;
+      manip_->graph()->displayNodeConstraints (id, str.out());
+      QString nodeStr (str);
+      constraintInfo_->setText (nodeStr);
+    }
+
+    void HppManipulationGraphWidget::displayEdgeConstraint(hpp::ID id)
+    {
+      CORBA::String_var str;
+      manip_->graph()->displayEdgeConstraints (id, str.out());
+      QString nodeStr (str);
+      constraintInfo_->setText (nodeStr);
+    }
+
+    void HppManipulationGraphWidget::displayEdgeTargetConstraint(hpp::ID id)
+    {
+      CORBA::String_var str;
+      manip_->graph()->displayEdgeTargetConstraints (id, str.out());
+      QString nodeStr (str);
+      constraintInfo_->setText (nodeStr);
     }
 
     void HppManipulationGraphWidget::edgeContextMenu(QGVEdge *edge)

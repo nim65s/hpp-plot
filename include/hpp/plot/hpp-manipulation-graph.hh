@@ -57,6 +57,9 @@ namespace hpp {
     public slots:
       void updateStatistics ();
       void showNodeOfConfiguration (const hpp::floatSeq& cfg);
+      void displayNodeConstraint(hpp::ID id);
+      void displayEdgeConstraint(hpp::ID id);
+      void displayEdgeTargetConstraint(hpp::ID id);
 
     protected slots:
       virtual void nodeContextMenu(QGVNode* node);
