@@ -3,7 +3,11 @@
 #include <limits>
 #include <QDockWidget>
 #include <QHBoxLayout>
-#include <QtConcurrent>
+#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
+# include <QtConcurrent>
+#else
+# include <QtCore>
+#endif
 
 #include <gepetto/gui/mainwindow.hh>
 #include <gepetto/gui/omniorb/url.hh>
