@@ -9,6 +9,8 @@
 #undef __problem_hh__
 #include <hpp/corbaserver/client.hh>
 
+class QDockWidget;
+
 namespace hpp {
   namespace plot {
     class HppMonitoringPlugin : public QObject, public gepetto::gui::PluginInterface,
@@ -16,6 +18,9 @@ namespace hpp {
     {
       Q_OBJECT
       Q_INTERFACES (gepetto::gui::PluginInterface gepetto::gui::CorbaInterface)
+#ifndef USE_QT4
+      Q_PLUGIN_METADATA (IID "hpp-plot.hppmonitoringplugin")
+#endif // USE_QT4
 
       public:
         explicit HppMonitoringPlugin ();

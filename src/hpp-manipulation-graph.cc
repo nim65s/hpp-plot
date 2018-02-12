@@ -17,6 +17,12 @@
 #include <QDebug>
 #include <QtGui/qtextdocument.h>
 
+#ifdef USE_QT4
+# define ESCAPE(q) Qt::escape(q)
+#else // USE_QT4
+# define ESCAPE(q) q.toHtmlEscaped()
+#endif // USE_QT4
+
 namespace hpp {
   namespace plot {
     namespace {
@@ -461,7 +467,7 @@ namespace hpp {
               "<li>Id: %3</li>"
               "%4"
               "</ul>%5%6%7")
-            .arg (type).arg (Qt::escape (name)).arg(id).arg (weight)
+            .arg (type).arg (ESCAPE(name)).arg(id).arg (weight)
             .arg(end).arg(constraints).arg(locked));
     }
 

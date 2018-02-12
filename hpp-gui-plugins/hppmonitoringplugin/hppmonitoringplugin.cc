@@ -1,6 +1,9 @@
 #include "hppmonitoringplugin.hh"
 
 #include <limits>
+#include <QDockWidget>
+#include <QHBoxLayout>
+#include <QtConcurrent>
 
 #include <gepetto/gui/mainwindow.hh>
 #include <gepetto/gui/omniorb/url.hh>
