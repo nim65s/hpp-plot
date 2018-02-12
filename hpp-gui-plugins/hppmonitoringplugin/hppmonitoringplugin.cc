@@ -281,6 +281,6 @@ namespace hpp {
   } // namespace plot
 } // namespace hpp
 
-#ifdef USE_QT4
+#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
 Q_EXPORT_PLUGIN2 (hppmonitoringplugin, hpp::plot::HppMonitoringPlugin)
-#endif // USE_QT4
+#endif

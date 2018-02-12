@@ -17,11 +17,11 @@
 #include <QDebug>
 #include <QtGui/qtextdocument.h>
 
-#ifdef USE_QT4
+#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
 # define ESCAPE(q) Qt::escape(q)
-#else // USE_QT4
+#else
 # define ESCAPE(q) q.toHtmlEscaped()
-#endif // USE_QT4
+#endif
 
 namespace hpp {
   namespace plot {
