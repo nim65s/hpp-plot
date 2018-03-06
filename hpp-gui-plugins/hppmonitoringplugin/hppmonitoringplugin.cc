@@ -43,6 +43,7 @@ namespace hpp {
 
       // Constraint graph widget
       dock = new QDockWidget ("Constraint &Graph", main);
+      dock->setObjectName ("hppmonitoringplugin.constraintgraph");
       cgWidget_ = new hpp::plot::HppManipulationGraphWidget (manip_, main);
       dock->setWidget(cgWidget_);
       main->insertDockWidget (dock, Qt::RightDockWidgetArea, Qt::Horizontal);
