@@ -27,8 +27,8 @@ namespace hpp {
     void HppManipulationPlugin::init()
     {
       hpp::manipulation::ProblemSolverPtr_t ps = hpp::manipulation::ProblemSolver::create ();
-      ps->addPathPlannerType ("M-RRT", hpp::manipulation::ManipulationPlanner::create);
-      ps->addPathValidationType ("Graph-discretized", hpp::manipulation::
+      ps->pathPlanners.add ("M-RRT", hpp::manipulation::ManipulationPlanner::create);
+      ps->pathValidations.add ("Graph-discretized", hpp::manipulation::
           GraphPathValidation::create <hpp::core::DiscretizedCollisionChecking>);
       ps->pathPlannerType ("M-RRT");
       ps->pathValidationType ("Graph-discretized", 0.05);
