@@ -107,6 +107,7 @@ namespace hpp {
       try {
         manip_->graph()->getGraph(graph.out(), elmts.out());
 
+        graphName_ = graph->name;
         scene_->setGraphAttribute("label", QString (graph->name));
 
         scene_->setGraphAttribute("splines","spline");

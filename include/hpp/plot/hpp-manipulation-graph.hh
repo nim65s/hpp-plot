@@ -50,6 +50,10 @@ namespace hpp {
 
       bool selectionID (hpp::ID& id);
       void showEdge (const hpp::ID& edgeId);
+      const std::string& graphName () const
+      {
+        return graphName_;
+      }
 
     protected:
       void fillScene ();
@@ -112,6 +116,7 @@ namespace hpp {
       QString getConstraints(hpp::ID id);
       QString getLockedJoints(hpp::ID id);
 
+      std::string graphName_;
       QList <GraphAction*> nodeContextMenuActions_;
       QList <GraphAction*> edgeContextMenuActions_;
       QMap <QGVNode*, NodeInfo> nodeInfos_;

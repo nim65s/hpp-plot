@@ -280,8 +280,10 @@ namespace hpp {
 
     void HppMonitoringPlugin::appliedConfigAtParam (int pid, double param)
     {
-      hpp::ID id = manip_->problem()->edgeAtParam(pid, param);
-      cgWidget_->showEdge (id);
+      CORBA::String_var graphName;
+      hpp::ID id = manip_->problem()->edgeAtParam(pid, param, graphName.out());
+      if (strcmp(graphName.in(), cgWidget_->graphName().c_str()) != 0)
+        cgWidget_->showEdge (id);
     }
   } // namespace plot
 } // namespace hpp
