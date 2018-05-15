@@ -23,7 +23,7 @@ SET(CXX_DISABLE_WERROR TRUE)
 INCLUDE(cmake/base.cmake)
 
 # Tells pkg-config to read qtversion from pkg config file.
-LIST(APPEND PKG_CONFIG_ADDITIONAL_VARIABLES qtversion)
+LIST(APPEND PKG_CONFIG_ADDITIONAL_VARIABLES qtversion cmake_plugin)
 
 SET(PROJECT_NAME "hpp-plot")
 SET(PROJECT_URL "https://github.com/jmirabel/hpp-plot")
