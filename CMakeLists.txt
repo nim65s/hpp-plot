@@ -77,8 +77,6 @@ IF (HPP_DEBUG)
 ENDIF()
 
 SET (${PROJECT_NAME}_HEADERS
-  include/hpp/plot/qcustomplot.h
-  include/hpp/plot/histogram-widget.hh
   include/hpp/plot/graph-widget.hh
   include/hpp/plot/hpp-manipulation-graph.hh
   )
@@ -104,8 +102,6 @@ ENDIF(USE_QT4)
 ADD_DEFINITIONS(${QT_DEFINITIONS})
 
 SET (${PROJECT_NAME}_SOURCES
-  src/qcustomplot.cpp
-  src/histogram-widget.cc
   src/graph-widget.cc
   src/hpp-manipulation-graph.cc
   )

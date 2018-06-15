@@ -16,26 +16,6 @@
 # hpp-plot  If not, see
 # <http://www.gnu.org/licenses/>.
 
-SET (${PROJECT_NAME}_SOURCES_TEST
-  test.cc
-  )
-
-ADD_EXECUTABLE(${PROJECT_NAME}-test
-  ${${PROJECT_NAME}_SOURCES_TEST})
-
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}-test ${QT_LIBRARIES} ${PROJECT_NAME})
-
-SET (${PROJECT_NAME}_SOURCES_HIST
-  hpp-plot-histogram.cc
-  )
-
-ADD_EXECUTABLE(${PROJECT_NAME}-histogram
-  ${${PROJECT_NAME}_SOURCES_HIST})
-
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}-histogram ${QT_LIBRARIES} ${PROJECT_NAME})
-
-INSTALL(TARGETS ${PROJECT_NAME}-histogram DESTINATION bin)
-
 SET (${PROJECT_NAME}_SOURCES_HIST
   hpp-plot-manipulation-graph.cc
   )
