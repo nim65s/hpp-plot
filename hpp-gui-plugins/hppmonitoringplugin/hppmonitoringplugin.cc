@@ -50,7 +50,8 @@ namespace hpp {
     HppMonitoringPlugin::HppMonitoringPlugin() :
       cgWidget_ (NULL),
       manip_ (NULL),
-      basic_ (NULL)
+      basic_ (NULL),
+      hppPlugin_ (NULL)
     {
     }
 
@@ -225,8 +226,7 @@ namespace hpp {
           bool success = manip_->problem()->applyConstraints
               (idNode, qRand.in(), res.out(), error);
           if (success) {
-              basic_->robot()->setCurrentConfig (res.in());
-              MainWindow::instance ()->requestApplyCurrentConfiguration ();
+              setCurrentConfig (res.in());
               return true;
             }
           if (error < minError) {
@@ -243,8 +243,8 @@ namespace hpp {
 
     bool HppMonitoringPlugin::projectCurrentConfigOn(ID idNode)
     {
-      hpp::floatSeq_var from = basic_->robot()->getCurrentConfig();
-      return projectConfigOn (from.in(), idNode);
+      hpp::floatSeq from = getCurrentConfig();
+      return projectConfigOn (from, idNode);
     }
 
     void HppMonitoringPlugin::setTargetState(ID idNode)
@@ -254,25 +254,15 @@ namespace hpp {
 
     bool HppMonitoringPlugin::extendFromCurrentToCurrentConfigOn(hpp::ID idEdge)
     {
-      hpp::floatSeq_var from = basic_->robot()->getCurrentConfig();
-      bool success = extendConfigOn (from.in(), from.in(), idEdge);
-      if (!success) {
-        basic_->robot()->setCurrentConfig (from.in());
-        MainWindow::instance ()->requestApplyCurrentConfiguration ();
-      }
-      return success;
+      hpp::floatSeq from = getCurrentConfig();
+      return extendConfigOn (from, from, idEdge);
     }
 
     bool HppMonitoringPlugin::extendFromCurrentToRandomConfigOn (hpp::ID idEdge)
     {
-      hpp::floatSeq_var from = basic_->robot()->getCurrentConfig();
+      hpp::floatSeq from = getCurrentConfig();
       hpp::floatSeq_var qRand = basic_->robot ()->shootRandomConfig ();
-      bool success = extendConfigOn (from.in(), qRand.in(), idEdge);
-      if (!success) {
-        basic_->robot()->setCurrentConfig (from.in());
-        MainWindow::instance ()->requestApplyCurrentConfiguration ();
-      }
-      return success;
+      return extendConfigOn (from, qRand.in(), idEdge);
     }
 
     bool HppMonitoringPlugin::projectConfigOn(hpp::floatSeq config, hpp::ID idNode)
@@ -281,8 +271,7 @@ namespace hpp {
       ::CORBA::Double error;
       bool success = manip_->problem()->applyConstraints(idNode, config, res.out(), error);
       if (success) {
-        basic_->robot()->setCurrentConfig (res.in());
-        MainWindow::instance ()->requestApplyCurrentConfiguration ();
+        setCurrentConfig (res.in());
       } else {
         MainWindow::instance ()->logError (QString ("Unable to project configuration. Residual error is %1").arg(error));
       }
@@ -295,8 +284,7 @@ namespace hpp {
       ::CORBA::Double error;
       bool success = manip_->problem()->applyConstraintsWithOffset(idEdge, from, config, res.out(), error);
       if (success) {
-        basic_->robot()->setCurrentConfig (res.in());
-        MainWindow::instance ()->requestApplyCurrentConfiguration ();
+        setCurrentConfig (res.in());
       } else {
         MainWindow::instance ()->logError (QString ("Unable to project configuration. Residual error is %1").arg(error));
       }
@@ -305,8 +293,8 @@ namespace hpp {
 
     void HppMonitoringPlugin::applyCurrentConfiguration ()
     {
-      hpp::floatSeq_var q = basic_->robot()->getCurrentConfig();
-      cgWidget_->showNodeOfConfiguration (q.in());
+      hpp::floatSeq q = getCurrentConfig();
+      cgWidget_->showNodeOfConfiguration (q);
     }
 
     void HppMonitoringPlugin::appliedConfigAtParam (int pid, double param)
@@ -315,6 +303,43 @@ namespace hpp {
       hpp::ID id = manip_->problem()->edgeAtParam(pid, param, graphName.out());
       if (strcmp(graphName.in(), cgWidget_->graphName().c_str()) != 0)
         cgWidget_->showEdge (id);
+    }
+
+    hpp::floatSeq HppMonitoringPlugin::getCurrentConfig ()
+    {
+      QObject* plugin (hppPlugin());
+      hpp::floatSeq const* config;
+      bool ok = QMetaObject::invokeMethod (plugin, "getCurrentConfig",
+          Qt::DirectConnection,
+          Q_RETURN_ARG (hpp::floatSeq const*, config));
+      if (!ok) {
+        qDebug() << "HppMonitoringPlugin::getCurrentConfig failed";
+      }
+      return *config;
+    }
+
+    void HppMonitoringPlugin::setCurrentConfig (const hpp::floatSeq& q)
+    {
+      QObject* plugin (hppPlugin());
+      bool ok = QMetaObject::invokeMethod (plugin, "setCurrentConfig",
+          Qt::DirectConnection,
+          Q_ARG (const hpp::floatSeq&, q));
+
+      if (!ok) {
+        qDebug() << "HppMonitoringPlugin::setCurrentConfig failed";
+      }
+    }
+
+    QObject* HppMonitoringPlugin::hppPlugin ()
+    {
+      if (hppPlugin_ == NULL) {
+        MainWindow* main = MainWindow::instance();
+        hppPlugin_ = main->getFromSlot ("getCurrentConfig");
+      }
+      if (hppPlugin_ == NULL) {
+        throw std::runtime_error ("unable to retrieve slot getCurrentConfig from HPP plugin");
+      }
+      return hppPlugin_;
     }
   } // namespace plot
 } // namespace hpp
