@@ -85,14 +85,18 @@ namespace hpp {
         bool projectConfigOn(hpp::floatSeq config, hpp::ID idNode);
         bool extendConfigOn(hpp::floatSeq from, hpp::floatSeq config, hpp::ID idEdge);
 
-
         bool projectRandomConfigOn_impl(hpp::ID idNode);
+
+        hpp::floatSeq getCurrentConfig ();
+        void setCurrentConfig (const hpp::floatSeq& q);
+        QObject* hppPlugin ();
 
         hpp::plot::HppManipulationGraphWidget* cgWidget_;
         QList <QDockWidget*> docks_;
 
         hpp::corbaServer::manipulation::Client* manip_;
         hpp::corbaServer::Client* basic_;
+        QObject* hppPlugin_;
     };
   } // namespace plot
 } // namespace hpp

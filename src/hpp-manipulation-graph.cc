@@ -338,7 +338,7 @@ namespace hpp {
           showNodeId_ = -1;
         }
       } catch (const hpp::Error& e) {
-        qDebug() << QString(e.msg);
+        qDebug() << "HppManipulationGraphWidget::showNodeOfConfiguration" << e.msg;
       }
     }
 
