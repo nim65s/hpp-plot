@@ -31,15 +31,16 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 SET(CXX_DISABLE_WERROR TRUE)
 
 INCLUDE(cmake/base.cmake)
+INCLUDE(cmake/hpp.cmake)
 
 # Tells pkg-config to read qtversion from pkg config file.
 LIST(APPEND PKG_CONFIG_ADDITIONAL_VARIABLES qtversion cmake_plugin)
 
 SET(PROJECT_NAME "hpp-plot")
-SET(PROJECT_URL "https://github.com/jmirabel/hpp-plot")
+SET(PROJECT_URL "https://github.com/humanoid-path-planner/hpp-plot")
 SET(PROJECT_DESCRIPTION "Plotting tools for HPP")
 
-SETUP_PROJECT()
+SETUP_HPP_PROJECT()
 
 OPTION(HPP_MANIPULATION_CORBA_CLIENT_ONLY "Disable functionnalities requiring the corba servers of HPP" OFF)
 
@@ -135,4 +136,4 @@ INSTALL(TARGETS ${PROJECT_NAME} DESTINATION lib)
 ADD_SUBDIRECTORY (bin)
 ADD_SUBDIRECTORY (hpp-gui-plugins)
 
-SETUP_PROJECT_FINALIZE()
+SETUP_HPP_PROJECT_FINALIZE()
