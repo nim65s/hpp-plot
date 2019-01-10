@@ -32,9 +32,6 @@
 #include "hppmanipulationplugin.hh"
 
 #include <hpp/manipulation/problem-solver.hh>
-#include <hpp/manipulation/manipulation-planner.hh>
-#include <hpp/core/discretized-collision-checking.hh>
-#include <hpp/manipulation/graph-path-validation.hh>
 
 #include <hppserverprocess.hh>
 
@@ -58,11 +55,6 @@ namespace hpp {
     void HppManipulationPlugin::init()
     {
       hpp::manipulation::ProblemSolverPtr_t ps = hpp::manipulation::ProblemSolver::create ();
-      ps->pathPlanners.add ("M-RRT", hpp::manipulation::ManipulationPlanner::create);
-      ps->pathValidations.add ("Graph-discretized", hpp::manipulation::
-          GraphPathValidation::create <hpp::core::DiscretizedCollisionChecking>);
-      ps->pathPlannerType ("M-RRT");
-      ps->pathValidationType ("Graph-discretized", 0.05);
 
       hpp::corbaServer::Server* bs = new hpp::corbaServer::Server (ps, 0, NULL, true);
       hpp::manipulation::Server* ms = new hpp::manipulation::Server (0, NULL, true);
