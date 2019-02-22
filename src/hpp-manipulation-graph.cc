@@ -199,7 +199,9 @@ namespace hpp {
               qDebug () << "Ignoring node" << elmts->nodes[i].name;
               continue;
             }
-	    QGVNode* n = scene_->addNode (QString (elmts->nodes[i].name));
+            QString nodeName (elmts->nodes[i].name);
+            nodeName.replace (" : ", "\n");
+	    QGVNode* n = scene_->addNode (nodeName);
 	    if (i == 0) scene_->setRootNode(n);
 	    NodeInfo ni;
 	    ni.id = elmts->nodes[i].id;
