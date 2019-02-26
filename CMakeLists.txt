@@ -37,7 +37,6 @@ INCLUDE(cmake/hpp.cmake)
 LIST(APPEND PKG_CONFIG_ADDITIONAL_VARIABLES qtversion cmake_plugin)
 
 SET(PROJECT_NAME "hpp-plot")
-SET(PROJECT_URL "https://github.com/humanoid-path-planner/hpp-plot")
 SET(PROJECT_DESCRIPTION "Plotting tools for HPP")
 
 SETUP_HPP_PROJECT()
