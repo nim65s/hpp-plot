@@ -175,8 +175,16 @@ namespace hpp {
       basic_ = new hpp::corbaServer::Client (0,0);
       manip_ = new hpp::corbaServer::manipulation::Client (0,0);
       QByteArray iiop = getIIOPurl ().toLatin1();
-      basic_->connect (iiop.constData ());
-      manip_->connect (iiop.constData ());
+      try {
+        basic_->connect (iiop.constData ());
+        manip_->connect (iiop.constData ());
+      } catch (const CosNaming::NamingContext::NotFound&) {
+        const char* msg = "Could not find the HPP server. Is it running ?";
+        qDebug () << msg;
+        gepetto::gui::MainWindow* main = gepetto::gui::MainWindow::instance();
+        if (main != NULL)
+          main->logError(msg);
+      }
       if (cgWidget_) cgWidget_->client (manip_);
     }
 
