@@ -31,6 +31,7 @@
 
 #include "hpp/plot/hpp-manipulation-graph.hh"
 
+#include <assert.h>
 #include <limits>
 #include <iostream>
 
@@ -133,6 +134,7 @@ namespace hpp {
 
     void HppManipulationGraphWidget::fillScene()
     {
+      if (manip_ == NULL) return;
       hpp::GraphComp_var graph = new hpp::GraphComp;
       hpp::GraphElements_var elmts = new hpp::GraphElements;
       try {
@@ -269,6 +271,11 @@ namespace hpp {
 
     void HppManipulationGraphWidget::updateStatistics()
     {
+      if (manip_ == NULL) {
+        updateStatsTimer_->stop();
+        statButton_->setChecked(false);
+        return;
+      }
       try {
         foreach (QGraphicsItem* elmt, scene_->items()) {
           QGVNode* node = dynamic_cast <QGVNode*> (elmt);
@@ -323,6 +330,7 @@ namespace hpp {
 
     void HppManipulationGraphWidget::showNodeOfConfiguration (const hpp::floatSeq& cfg)
     {
+      if (manip_ == NULL) return;
       if (showNodeId_ >= 0) {
         // Do unselect
         nodes_[showNodeId_]->setAttribute("fillcolor", "white");
@@ -385,6 +393,7 @@ namespace hpp {
 
     void HppManipulationGraphWidget::displayNodeConstraint(hpp::ID id)
     {
+      if (manip_ == NULL) return;
       CORBA::String_var str;
       manip_->graph()->displayNodeConstraints (id, str.out());
       QString nodeStr (str);
@@ -393,6 +402,7 @@ namespace hpp {
 
     void HppManipulationGraphWidget::displayEdgeConstraint(hpp::ID id)
     {
+      if (manip_ == NULL) return;
       CORBA::String_var str;
       manip_->graph()->displayEdgeConstraints (id, str.out());
       QString nodeStr (str);
@@ -401,6 +411,7 @@ namespace hpp {
 
     void HppManipulationGraphWidget::displayEdgeTargetConstraint(hpp::ID id)
     {
+      if (manip_ == NULL) return;
       CORBA::String_var str;
       manip_->graph()->displayEdgeTargetConstraints (id, str.out());
       QString nodeStr (str);
@@ -529,6 +540,7 @@ namespace hpp {
 
     void HppManipulationGraphWidget::updateWeight (EdgeInfo& ei, bool get)
     {
+      if (manip_ == NULL) return;
       if (get) ei.weight = manip_->graph()->getWeight(ei.id);
       if (ei.edge == NULL) return;
       if (ei.weight <= 0) {
@@ -542,6 +554,7 @@ namespace hpp {
 
     void HppManipulationGraphWidget::updateWeight (EdgeInfo& ei, const ::CORBA::Long w)
     {
+      if (manip_ == NULL) return;
       manip_->graph()->setWeight(ei.id, w);
       ei.weight = w;
       updateWeight (ei, false);
@@ -549,6 +562,7 @@ namespace hpp {
 
     QString HppManipulationGraphWidget::getConstraints (hpp::ID id)
     {
+      assert (manip_ != NULL);
       QString ret;
       hpp::Names_t_var c = new hpp::Names_t;
       manip_->graph()->getNumericalConstraints(id, c);
@@ -567,6 +581,7 @@ namespace hpp {
 
     QString HppManipulationGraphWidget::getLockedJoints (hpp::ID id)
     {
+      assert (manip_ != NULL);
       QString ret;
       hpp::Names_t_var c = new hpp::Names_t;
       manip_->graph()->getLockedJoints(id, c);
