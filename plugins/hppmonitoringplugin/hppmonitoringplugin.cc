@@ -178,12 +178,22 @@ namespace hpp {
       try {
         basic_->connect (iiop.constData ());
         manip_->connect (iiop.constData ());
-      } catch (const CosNaming::NamingContext::NotFound&) {
-        const char* msg = "Could not find the HPP server. Is it running ?";
-        qDebug () << msg;
+        hpp::Names_t_var for_deletion = manip_->problem()->getAvailable("type");
+      } catch (const CORBA::Exception& e) {
+        QString error ("Could not find the manipulation server. Is it running ?");
+        error += "\n";
+        error += e._name();
+        error += " : ";
+        error += e._rep_id();
+
         gepetto::gui::MainWindow* main = gepetto::gui::MainWindow::instance();
         if (main != NULL)
-          main->logError(msg);
+          main->logError(error);
+        else
+          qDebug () << error;
+
+        closeConnection ();
+        return;
       }
       if (cgWidget_) cgWidget_->client (manip_);
     }
@@ -224,6 +234,7 @@ namespace hpp {
 
     bool HppMonitoringPlugin::projectRandomConfigOn_impl(hpp::ID idNode)
     {
+      if (manip_ == NULL) return false;
       hpp::floatSeq_var qRand;
       hpp::floatSeq_var res;
       ::CORBA::Double error, minError = std::numeric_limits<double>::infinity();
@@ -257,6 +268,7 @@ namespace hpp {
 
     void HppMonitoringPlugin::setTargetState(ID idNode)
     {
+      if (manip_ == NULL) return;
       manip_->problem()->setTargetState(idNode);
     }
 
@@ -275,6 +287,7 @@ namespace hpp {
 
     bool HppMonitoringPlugin::projectConfigOn(hpp::floatSeq config, hpp::ID idNode)
     {
+      if (manip_ == NULL) return false;
       hpp::floatSeq_var res;
       ::CORBA::Double error;
       bool success = manip_->problem()->applyConstraints(idNode, config, res.out(), error);
@@ -288,6 +301,7 @@ namespace hpp {
 
     bool HppMonitoringPlugin::extendConfigOn(hpp::floatSeq from, hpp::floatSeq config, hpp::ID idEdge)
     {
+      if (manip_ == NULL) return false;
       hpp::floatSeq_var res;
       ::CORBA::Double error;
       bool success = manip_->problem()->applyConstraintsWithOffset(idEdge, from, config, res.out(), error);
@@ -307,6 +321,7 @@ namespace hpp {
 
     void HppMonitoringPlugin::appliedConfigAtParam (int pid, double param)
     {
+      if (manip_ == NULL) return;
       CORBA::String_var graphName;
       hpp::ID id = manip_->problem()->edgeAtParam(pid, param, graphName.out());
       if (strcmp(graphName.in(), cgWidget_->graphName().c_str()) != 0)
