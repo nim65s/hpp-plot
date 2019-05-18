@@ -327,7 +327,12 @@ namespace hpp {
     {
       if (manip_ == NULL) return;
       CORBA::String_var graphName;
-      hpp::ID id = manip_->problem()->edgeAtParam(pid, param, graphName.out());
+      hpp::ID id;
+      try {
+        id = manip_->problem()->edgeAtParam(pid, param, graphName.out());
+      } catch (const hpp::Error& e) {
+        return;
+      }
       if (strcmp(graphName.in(), cgWidget_->graphName().c_str()) != 0)
         cgWidget_->showEdge (id);
     }
