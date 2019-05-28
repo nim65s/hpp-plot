@@ -1,0 +1,4 @@
+                                                                -*- outline -*-
+New in 4.6.0
+* Catch error when HPP server are not found.
+* Better handling of CORBA connection
