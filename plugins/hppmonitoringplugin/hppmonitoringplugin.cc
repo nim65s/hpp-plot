@@ -239,24 +239,28 @@ namespace hpp {
       hpp::floatSeq_var res;
       ::CORBA::Double error, minError = std::numeric_limits<double>::infinity();
       int i = 0;
-      do {
-          qRand = basic_->robot ()->shootRandomConfig ();
-          i++;
-          bool success = manip_->problem()->applyConstraints
-              (idNode, qRand.in(), res.out(), error);
-          if (success) {
-              setCurrentConfig (res.in());
-              return true;
+      try {
+        do {
+            qRand = basic_->robot ()->shootRandomConfig ();
+            i++;
+            bool success = manip_->problem()->applyConstraints
+                (idNode, qRand.in(), res.out(), error);
+            if (success) {
+                setCurrentConfig (res.in());
+                return true;
+              }
+            if (error < minError) {
+                minError = error;
+              }
+            if (i >= 20) {
+              qDebug () << "Projection failed after 20 trials.";
+              break;
             }
-          if (error < minError) {
-              minError = error;
-            }
-          if (i >= 20) {
-            qDebug () << "Projection failed after 20 trials.";
-            break;
-          }
-          emit projectionStatus(QString ("Tried %1 times. Minimal residual error is %2").arg(i).arg(minError));
-        } while (true);
+            emit projectionStatus(QString ("Tried %1 times. Minimal residual error is %2").arg(i).arg(minError));
+          } while (true);
+      } catch (const hpp::Error& e) {
+        MainWindow::instance ()->logError (e.msg.in());
+      }
       return false;
     }
 
@@ -323,7 +327,12 @@ namespace hpp {
     {
       if (manip_ == NULL) return;
       CORBA::String_var graphName;
-      hpp::ID id = manip_->problem()->edgeAtParam(pid, param, graphName.out());
+      hpp::ID id;
+      try {
+        id = manip_->problem()->edgeAtParam(pid, param, graphName.out());
+      } catch (const hpp::Error& e) {
+        return;
+      }
       if (strcmp(graphName.in(), cgWidget_->graphName().c_str()) != 0)
         cgWidget_->showEdge (id);
     }
