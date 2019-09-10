@@ -113,12 +113,10 @@ namespace hpp {
       struct GraphInfo {
         ::hpp::ID id;
         QString constraintStr;
-        QString lockedStr;
       } graphInfo_;
       struct NodeInfo {
         ::hpp::ID id;
         QString constraintStr;
-        QString lockedStr;
         QGVNode* node;
 
         ::hpp::ConfigProjStat_var configStat, pathStat;
@@ -131,7 +129,7 @@ namespace hpp {
         QString name, containingNodeName;
         ::CORBA::Long weight;
         QString constraintStr;
-        QString lockedStr;
+        QString shortStr;
         QGVEdge* edge;
 
         ::hpp::ConfigProjStat_var configStat, pathStat;
@@ -145,7 +143,6 @@ namespace hpp {
       void updateWeight (EdgeInfo& ei, const ::CORBA::Long w);
 
       QString getConstraints(hpp::ID id);
-      QString getLockedJoints(hpp::ID id);
 
       std::string graphName_;
       QList <GraphAction*> nodeContextMenuActions_;

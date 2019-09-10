@@ -158,7 +158,6 @@ namespace hpp {
 
         graphInfo_.id = graph->id;
         graphInfo_.constraintStr = getConstraints(graphInfo_.id);
-        graphInfo_.lockedStr = getLockedJoints(graphInfo_.id);
 
         // Add the nodes
         nodes_.clear();
@@ -209,7 +208,6 @@ namespace hpp {
 	    ni.id = elmts->nodes[i].id;
 	    ni.node = n;
 	    ni.constraintStr = getConstraints(ni.id);
-	    ni.lockedStr = getLockedJoints(ni.id);
 	    nodeInfos_[n] = ni;
 	    n->setFlag (QGraphicsItem::ItemIsMovable, true);
 	    n->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
@@ -243,14 +241,13 @@ namespace hpp {
                   "This transition has %1 waypoints.<br/>"
                   "To see the constraints of the transition inside,<br/>"
                   "re-draw the graph after enabling \"Show waypoints\"</p>")
-                .arg(elmts->edges[i].waypoints.length());
-              ei.lockedStr = "";
+                .arg(elmts->edges[(CORBA::ULong) i].waypoints.length());
+              ei.shortStr = "";
             } else {
               ei.constraintStr = getConstraints(ei.id);
-              ei.lockedStr = getLockedJoints(ei.id);
 
               if (manip_->graph()->isShort(ei.id))
-                ei.lockedStr += "<h4>Short</h4>";
+                ei.shortStr = "<h4>Short</h4>";
             }
 
             // If this is a transition inside a WaypointEdge
@@ -456,7 +453,6 @@ namespace hpp {
       QString type, name; ::hpp::ID id;
       QString end;
       QString constraints;
-      QString locked;
       QString weight;
 
       if (items.size() == 0) {
@@ -467,7 +463,6 @@ namespace hpp {
         type = "Graph";
         id = graphInfo_.id;
         constraints = graphInfo_.constraintStr;
-        locked = graphInfo_.lockedStr;
       } else if (items.size() == 1) {
         QGVNode* node = dynamic_cast <QGVNode*> (items.first());
         QGVEdge* edge = dynamic_cast <QGVEdge*> (items.first());
@@ -478,7 +473,6 @@ namespace hpp {
           id = ni.id;
           currentId_ = id;
           constraints = ni.constraintStr;
-          locked = ni.lockedStr;
           end = QString("<p><h4>Nb node in roadmap:</h4> %1</p>").arg(ni.freq);
           end.append("<p><h4>Nb node in roadmap per connected component</h4>\n");
           for (std::size_t i = 0; i < ni.freqPerCC->length(); ++i) {
@@ -496,13 +490,12 @@ namespace hpp {
           for (std::size_t i = 0; i < std::min(ei.errors->length(),ei.freqs->length()); ++i) {
             end.append (
                 QString ("<li>%1: %2</li>")
-                .arg(QString(ei.errors.in()[i]))
-                .arg(        ei.freqs.in()[i]  ));
+                .arg(QString(ei.errors.in()[(CORBA::ULong) i]))
+                .arg(        ei.freqs.in()[(CORBA::ULong) i]  ));
           }
           end.append("</ul></p>");
           end.append(QString("<p><h4>Containing node</h4>\n%1</p>").arg(ei.containingNodeName));
           constraints = ei.constraintStr;
-          locked = ei.lockedStr;
         } else {
           return;
         }
@@ -511,9 +504,9 @@ namespace hpp {
             QString ("<h4>%1 %2</h4><ul>"
               "<li>Id: %3</li>"
               "%4"
-              "</ul>%5%6%7")
+              "</ul>%5%6")
             .arg (type).arg (ESCAPE(name)).arg(id).arg (weight)
-            .arg(end).arg(constraints).arg(locked));
+            .arg(end).arg(constraints));
     }
 
     void HppManipulationGraphWidget::startStopUpdateStats(bool start)
@@ -576,25 +569,6 @@ namespace hpp {
       }
       else
 	ret.append("No constraints applied</p>");
-      return ret;
-    }
-
-    QString HppManipulationGraphWidget::getLockedJoints (hpp::ID id)
-    {
-      assert (manip_ != NULL);
-      QString ret;
-      hpp::Names_t_var c = new hpp::Names_t;
-      manip_->graph()->getLockedJoints(id, c);
-      ret.append("<p><h4>Locked joints</h4>");
-      if (c->length() > 0) {
-	ret.append("<ul>");
-	for (unsigned i = 0; i < c->length(); i++) {
-	  ret.append(QString("<li>%1</li>").arg(c[i].in()));
-	}
-	ret.append("</ul></p>");
-      }
-      else
-	ret.append("No locked joints</p>");
       return ret;
     }
   }
