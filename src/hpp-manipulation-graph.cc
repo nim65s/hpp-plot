@@ -168,23 +168,27 @@ namespace hpp {
         
         // initialize node counters.
         for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
-	  if (elmts->nodes[i].id > graph->id) {
-            ::hpp::ID id = elmts->nodes[i].id;
+	  if (elmts->nodes[(CORBA::ULong) i].id > graph->id) {
+            ::hpp::ID id = elmts->nodes[(CORBA::ULong) i].id;
             nodeIsWaypoint[id] = false;
 	  }
         }
 
         // Find what edge are visible and count the nodes accordingly.
         for (std::size_t i = 0; i < elmts->edges.length(); ++i) {
-	  if (elmts->edges[i].id > graph->id) {
+	  if (elmts->edges[(CORBA::ULong) i].id > graph->id) {
 
-            ::hpp::ID id = elmts->edges[i].id;
+            ::hpp::ID id = elmts->edges[(CORBA::ULong) i].id;
             ::CORBA::Long weight = manip_->graph()->getWeight(id);
 
-            for (std::size_t k = 0; k < elmts->edges[i].waypoints.length(); ++k)
-              nodeIsWaypoint[elmts->edges[i].waypoints[k]] = true;
+            for (std::size_t k = 0; k < elmts->edges[(CORBA::ULong) i].
+                   waypoints.length(); ++k)
+              nodeIsWaypoint[elmts->edges[(CORBA::ULong) i].
+                             waypoints[(CORBA::ULong) k]] =
+                true;
 
-            bool hasWaypoints = elmts->edges[i].waypoints.length() > 0;
+            bool hasWaypoints = elmts->edges[(CORBA::ULong) i].
+              waypoints.length() > 0;
             // If    show Waypoint and this is not a waypoint edge
             //    or hide Waypoint and this is not a transition inside a WaypointEdge
             edgeVisible[id] = (!hideW && !hasWaypoints)
@@ -193,50 +197,55 @@ namespace hpp {
         }
 
         for (std::size_t i = 0; i < elmts->nodes.length(); ++i) {
-	  if (elmts->nodes[i].id > graph->id) {
-            Q_ASSERT ( nodeIsWaypoint.contains(elmts->nodes[i].id) );
+	  if (elmts->nodes[(CORBA::ULong) i].id > graph->id) {
+            Q_ASSERT (nodeIsWaypoint.contains(elmts->nodes
+                                              [(CORBA::ULong) i].id));
 
-            if ( hideW && nodeIsWaypoint[elmts->nodes[i].id]) {
-              qDebug () << "Ignoring node" << elmts->nodes[i].name;
+            if ( hideW && nodeIsWaypoint[elmts->nodes[(CORBA::ULong) i].id]) {
+              qDebug () << "Ignoring node"
+                        << elmts->nodes[(CORBA::ULong) i].name;
               continue;
             }
-            QString nodeName (elmts->nodes[i].name);
+            QString nodeName (elmts->nodes[(CORBA::ULong) i].name);
             nodeName.replace (" : ", "\n");
 	    QGVNode* n = scene_->addNode (nodeName);
 	    if (i == 0) scene_->setRootNode(n);
 	    NodeInfo ni;
-	    ni.id = elmts->nodes[i].id;
+	    ni.id = elmts->nodes[(CORBA::ULong) i].id;
 	    ni.node = n;
 	    ni.constraintStr = getConstraints(ni.id);
 	    nodeInfos_[n] = ni;
 	    n->setFlag (QGraphicsItem::ItemIsMovable, true);
 	    n->setFlag (QGraphicsItem::ItemSendsGeometryChanges, true);
-	    nodes_[elmts->nodes[i].id] = n;
+	    nodes_[elmts->nodes[(CORBA::ULong) i].id] = n;
 
             if (nodeIsWaypoint[ni.id])
               n->setAttribute("shape", "hexagon");
           }
         }
         for (std::size_t i = 0; i < elmts->edges.length(); ++i) {
-	  if (elmts->edges[i].id > graph->id) {
-            Q_ASSERT ( edgeVisible.contains(elmts->edges[i].id)
-                &&     nodeIsWaypoint.contains(elmts->edges[i].start)
-                &&     nodeIsWaypoint.contains(elmts->edges[i].end));
-            if ( !edgeVisible[elmts->edges[i].id]) {
-              qDebug () << "Ignoring edge" << elmts->edges[i].name;
+	  if (elmts->edges[(CORBA::ULong) i].id > graph->id) {
+            Q_ASSERT ( edgeVisible.contains(elmts->edges[(CORBA::ULong) i].id)
+                && nodeIsWaypoint.contains(elmts->edges[(CORBA::ULong) i].start)
+                && nodeIsWaypoint.contains(elmts->edges[(CORBA::ULong) i].end));
+            if ( !edgeVisible[elmts->edges[(CORBA::ULong) i].id]) {
+              qDebug () << "Ignoring edge"
+                        << elmts->edges[(CORBA::ULong) i].name;
               continue;
             }
 	    EdgeInfo ei;
-	    QGVEdge* e = scene_->addEdge (nodes_[elmts->edges[i].start],
-					  nodes_[elmts->edges[i].end], "");
-	    ei.name = QString::fromLocal8Bit(elmts->edges[i].name);
-	    ei.id = elmts->edges[i].id;
+	    QGVEdge* e = scene_->addEdge
+              (nodes_[elmts->edges[(CORBA::ULong) i].start],
+               nodes_[elmts->edges[(CORBA::ULong) i].end], "");
+	    ei.name = QString::fromLocal8Bit
+              (elmts->edges[(CORBA::ULong) i].name);
+	    ei.id = elmts->edges[(CORBA::ULong) i].id;
             CORBA::String_var cnname = manip_->graph()->getContainingNode(ei.id);
             ei.containingNodeName = QString::fromLocal8Bit((char*)cnname);
 	    ei.edge = e;
 	    updateWeight (ei, true);
 
-            if (elmts->edges[i].waypoints.length() > 0) {
+            if (elmts->edges[(CORBA::ULong) i].waypoints.length() > 0) {
               ei.constraintStr = tr("<p><h4>Waypoint transition</h4>"
                   "This transition has %1 waypoints.<br/>"
                   "To see the constraints of the transition inside,<br/>"
@@ -253,7 +262,8 @@ namespace hpp {
             // If this is a transition inside a WaypointEdge
 	    if (ei.weight < 0) {
 	      e->setAttribute("weight", "3");
-	      if (elmts->edges[i].start >= elmts->edges[i].end)
+	      if (elmts->edges[(CORBA::ULong) i].start >=
+                  elmts->edges[(CORBA::ULong) i].end)
 		e->setAttribute("constraint", "false");
             }
 
@@ -476,7 +486,8 @@ namespace hpp {
           end = QString("<p><h4>Nb node in roadmap:</h4> %1</p>").arg(ni.freq);
           end.append("<p><h4>Nb node in roadmap per connected component</h4>\n");
           for (std::size_t i = 0; i < ni.freqPerCC->length(); ++i) {
-            end.append (QString (" %1,").arg(ni.freqPerCC.in()[i]));
+            end.append
+              (QString (" %1,").arg(ni.freqPerCC.in()[(CORBA::ULong) i]));
           }
           end.append("</p>");
         } else if (edge) {
