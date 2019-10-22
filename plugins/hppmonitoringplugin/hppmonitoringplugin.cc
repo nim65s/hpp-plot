@@ -243,7 +243,7 @@ namespace hpp {
         do {
             qRand = basic_->robot ()->shootRandomConfig ();
             i++;
-            bool success = manip_->problem()->applyConstraints
+            bool success = manip_->graph()->applyNodeConstraints
                 (idNode, qRand.in(), res.out(), error);
             if (success) {
                 setCurrentConfig (res.in());
@@ -294,7 +294,8 @@ namespace hpp {
       if (manip_ == NULL) return false;
       hpp::floatSeq_var res;
       ::CORBA::Double error;
-      bool success = manip_->problem()->applyConstraints(idNode, config, res.out(), error);
+      bool success = manip_->graph ()->applyNodeConstraints
+        (idNode, config, res.out(), error);
       if (success) {
         setCurrentConfig (res.in());
       } else {
@@ -308,7 +309,8 @@ namespace hpp {
       if (manip_ == NULL) return false;
       hpp::floatSeq_var res;
       ::CORBA::Double error;
-      bool success = manip_->problem()->applyConstraintsWithOffset(idEdge, from, config, res.out(), error);
+      bool success = manip_->graph()->generateTargetConfig
+        (idEdge, from, config, res.out(), error);
       if (success) {
         setCurrentConfig (res.in());
       } else {
