@@ -34,5 +34,7 @@ ADD_EXECUTABLE(${PROJECT_NAME}-manipulation-graph
   ${${PROJECT_NAME}_SOURCES_HIST})
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}-manipulation-graph ${QT_LIBRARIES} ${PROJECT_NAME})
+PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME}-manipulation-graph hpp-manipulation-corba)
+PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME}-manipulation-graph qgv)
 
 INSTALL(TARGETS ${PROJECT_NAME}-manipulation-graph DESTINATION bin)
