@@ -43,6 +43,7 @@ PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 
 OPTION(HPP_MANIPULATION_CORBA_CLIENT_ONLY "Disable functionnalities requiring the corba servers of HPP" OFF)
 
+ADD_OPTIONAL_DEPENDENCY("gepetto-viewer")
 ADD_OPTIONAL_DEPENDENCY("gepetto-viewer-corba")
 
 IF(GEPETTO_VIEWER_CORBA_FOUND)
