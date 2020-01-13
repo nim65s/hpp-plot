@@ -41,7 +41,6 @@
 #endif
 
 #include <gepetto/gui/mainwindow.hh>
-#include <gepetto/gui/omniorb/url.hh>
 
 using gepetto::gui::MainWindow;
 
@@ -160,13 +159,20 @@ namespace hpp {
       return QString ("Monitoring for hpp-manipulation-corba");
     }
 
-    static QString getIIOPurl ()
+    static QString getHppIIOPurl ()
     {
-      QString host = MainWindow::instance ()->settings_->getSetting
-        ("hpp/host", QString ()).toString ();
-      QString port = MainWindow::instance ()->settings_->getSetting
-        ("hpp/port", QString ()).toString ();
-      return gepetto::gui::omniOrb::IIOPurl (host, port);
+      QString host = gepetto::gui::MainWindow::instance ()->settings_->getSetting
+        ("hpp/host", "localhost").toString ();
+      QString port = gepetto::gui::MainWindow::instance ()->settings_->getSetting
+        ("hpp/port", "13331").toString ();
+      return QString ("corbaloc:iiop:%1:%2").arg(host).arg(port);
+    }
+
+    static QString getHppContext ()
+    {
+      QString context = gepetto::gui::MainWindow::instance ()->settings_->getSetting
+        ("hpp/context", QString ("corbaserver")).toString ();
+      return context;
     }
 
     void HppMonitoringPlugin::openConnection()
@@ -174,10 +180,11 @@ namespace hpp {
       closeConnection ();
       basic_ = new hpp::corbaServer::Client (0,0);
       manip_ = new hpp::corbaServer::manipulation::Client (0,0);
-      QByteArray iiop = getIIOPurl ().toLatin1();
+      QByteArray iiop    = getHppIIOPurl ().toLatin1();
+      QByteArray context = getHppContext ().toLatin1();
       try {
-        basic_->connect (iiop.constData ());
-        manip_->connect (iiop.constData ());
+        basic_->connect (iiop.constData (), context.constData ());
+        manip_->connect (iiop.constData (), context.constData ());
         hpp::Names_t_var for_deletion = manip_->problem()->getAvailable("type");
       } catch (const CORBA::Exception& e) {
         QString error ("Could not find the manipulation server. Is it running ?");
