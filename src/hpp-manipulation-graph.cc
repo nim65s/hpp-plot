@@ -337,6 +337,7 @@ namespace hpp {
 
     void HppManipulationGraphWidget::showNodeOfConfiguration (const hpp::floatSeq& cfg)
     {
+      static bool lastlog = false;
       if (manip_ == NULL) return;
       if (showNodeId_ >= 0) {
         // Do unselect
@@ -354,8 +355,11 @@ namespace hpp {
           qDebug() << "Node" << showNodeId_ << "does not exist. Refer the graph may solve the issue.";
           showNodeId_ = -1;
         }
+        lastlog = false;
       } catch (const hpp::Error& e) {
-        qDebug() << "HppManipulationGraphWidget::showNodeOfConfiguration" << e.msg;
+        if (!lastlog)
+          qDebug() << "HppManipulationGraphWidget::showNodeOfConfiguration" << e.msg;
+        lastlog = true;
       }
     }
 
