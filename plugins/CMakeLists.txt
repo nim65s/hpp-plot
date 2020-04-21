@@ -1,8 +1,8 @@
 # BSD 2-Clause License
 
 #
-# Copyright (c) 2015, 2018 CNRS
-# Authors: Joseph Mirabel
+# Copyright (c) 2015, 2018, 2020 CNRS
+# Authors: Joseph Mirabel, Guilhem Saurel
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without

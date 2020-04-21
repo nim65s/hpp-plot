@@ -1,8 +1,8 @@
 # BSD 2-Clause License
 
 #
-# Copyright (c) 2015, 2018 CNRS
-# Authors: Joseph Mirabel
+# Copyright (c) 2015, 2018, 2020 CNRS
+# Authors: Joseph Mirabel, Guilhem Saurel
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,6 @@ ADD_EXECUTABLE(${PROJECT_NAME}-manipulation-graph
   ${${PROJECT_NAME}_SOURCES_HIST})
 
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}-manipulation-graph ${QT_LIBRARIES} ${PROJECT_NAME})
-PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME}-manipulation-graph hpp-manipulation-corba)
 PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME}-manipulation-graph qgv)
 
 INSTALL(TARGETS ${PROJECT_NAME}-manipulation-graph DESTINATION bin)

@@ -1,8 +1,8 @@
 # BSD 2-Clause License
 
 #
-# Copyright (c) 2015, 2018 CNRS
-# Authors: Joseph Mirabel
+# Copyright (c) 2015, 2018, 2020 CNRS
+# Authors: Joseph Mirabel, Guilhem Saurel
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 IF(USE_QT4)
   SET(QT "QT4")

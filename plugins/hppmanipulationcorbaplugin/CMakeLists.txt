@@ -1,8 +1,8 @@
 # BSD 2-Clause License
 
 #
-# Copyright (c) 2015, 2018 CNRS
-# Authors: Joseph Mirabel
+# Copyright (c) 2015, 2018, 2020 CNRS
+# Authors: Joseph Mirabel, Guilhem Saurel
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -45,7 +45,6 @@ GEPETTO_GUI_PLUGIN(hppmanipulationplugin
   hppmanipulationplugin.cc
   hppserverprocess.cc
 
-  PKG_CONFIG_DEPENDENCIES
-  "hpp-corbaserver"
-  "hpp-manipulation-corba"
+  LINK_DEPENDENCIES
+  "hpp-manipulation-corba::hpp-manipulation-corba"
   )

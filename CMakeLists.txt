@@ -1,8 +1,8 @@
 # BSD 2-Clause License
 
 #
-# Copyright (c) 2015, 2018 CNRS
-# Authors: Joseph Mirabel
+# Copyright (c) 2015, 2018, 2020 CNRS
+# Authors: Joseph Mirabel, Guilhem Saurel
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 SET(PROJECT_NAME "hpp-plot")
 SET(PROJECT_DESCRIPTION "Plotting tools for HPP")
 
+SET(PROJECT_USE_CMAKE_EXPORT TRUE)
 SET(CXX_DISABLE_WERROR TRUE)
 
 INCLUDE(cmake/hpp.cmake)
@@ -43,10 +44,10 @@ PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 
 OPTION(HPP_MANIPULATION_CORBA_CLIENT_ONLY "Disable functionnalities requiring the corba servers of HPP" OFF)
 
-ADD_OPTIONAL_DEPENDENCY("gepetto-viewer")
-ADD_OPTIONAL_DEPENDENCY("gepetto-viewer-corba")
+ADD_PROJECT_DEPENDENCY("gepetto-viewer")
+ADD_PROJECT_DEPENDENCY("gepetto-viewer-corba")
 
-IF(GEPETTO_VIEWER_CORBA_FOUND)
+IF(gepetto-viewer-corba_FOUND)
   # Get desired Qt version
   string(REPLACE "." ";" DESIRED_QT_VERSION_LIST ${GEPETTO_VIEWER_CORBA_QTVERSION})
   list(GET DESIRED_QT_VERSION_LIST 0 DESIRED_QT_VERSION_MAJOR)
@@ -58,9 +59,9 @@ IF(GEPETTO_VIEWER_CORBA_FOUND)
   ELSE()
     MESSAGE(FATAL_ERROR "This package is only compatible with Qt 4 and Qt 5")
   ENDIF()
-ELSE(GEPETTO_VIEWER_CORBA_FOUND)
+ELSE(gepetto-viewer-corba_FOUND)
   SET(USE_QT4 FALSE CACHE BOOL "Use Qt4 instead of Qt5")
-ENDIF(GEPETTO_VIEWER_CORBA_FOUND)
+ENDIF(gepetto-viewer-corba_FOUND)
 
 MESSAGE(STATUS "Looking for Qt ${DESIRED_QT_VERSION_MAJOR}.")
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -76,16 +77,8 @@ ELSE(USE_QT4)
   SET(PKG_CONFIG_EXTRA "qtversion=${Qt5Core_VERSION}")
 ENDIF(USE_QT4)
 
-ADD_REQUIRED_DEPENDENCY("hpp-corbaserver")
-ADD_REQUIRED_DEPENDENCY("hpp-manipulation-corba")
+ADD_PROJECT_DEPENDENCY("hpp-manipulation-corba" REQUIRED)
 ADD_REQUIRED_DEPENDENCY("qgv")
-
-
-# Activate hpp-util logging if requested
-SET (HPP_DEBUG FALSE CACHE BOOL "trigger hpp-util debug output")
-IF (HPP_DEBUG)
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHPP_DEBUG")
-ENDIF()
 
 SET (${PROJECT_NAME}_HEADERS
   include/hpp/plot/graph-widget.hh
@@ -126,12 +119,10 @@ ADD_LIBRARY (${PROJECT_NAME}
   ${${PROJECT_NAME}_RESOURCES_RCC}
   )
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${QT_LIBRARIES})
-PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} hpp-corbaserver)
-PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} hpp-manipulation-corba)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${QT_LIBRARIES} hpp-manipulation-corba::hpp-manipulation-corba)
 PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} qgv)
 
-INSTALL(TARGETS ${PROJECT_NAME} DESTINATION lib)
+INSTALL(TARGETS ${PROJECT_NAME} EXPORT ${TARGETS_EXPORT_NAME} DESTINATION lib)
 
 ADD_SUBDIRECTORY (bin)
 ADD_SUBDIRECTORY (plugins)
