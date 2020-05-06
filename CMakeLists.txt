@@ -32,6 +32,7 @@ SET(PROJECT_NAME "hpp-plot")
 SET(PROJECT_DESCRIPTION "Plotting tools for HPP")
 
 SET(PROJECT_USE_CMAKE_EXPORT TRUE)
+SET(PROJECT_USE_KEYWORD_LINK_LIBRARIES TRUE)
 SET(CXX_DISABLE_WERROR TRUE)
 
 INCLUDE(cmake/hpp.cmake)
@@ -69,11 +70,11 @@ IF(USE_QT4)
   FIND_PACKAGE(Qt4 REQUIRED QtCore QtGui)
   SET(PKG_CONFIG_EXTRA "qtversion: ${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
 ELSE(USE_QT4)
-  FOREACH (component "Core" "Widgets" "Gui" "PrintSupport" "Concurrent")
+  FOREACH (component "Core" "Widgets" "Gui" "PrintSupport" "Concurrent" OpenGL Network Xml)
     FIND_PACKAGE ("Qt5${component}" REQUIRED)
     LIST(APPEND QT_INCLUDE_DIRS ${Qt5${component}_INCLUDE_DIRS})
     LIST(APPEND QT_LIBRARIES    ${Qt5${component}_LIBRARIES}   )
-  ENDFOREACH (component "Core" "Widgets" "Gui" "PrintSupport" "Concurrent")
+  ENDFOREACH ()
   SET(PKG_CONFIG_EXTRA "qtversion=${Qt5Core_VERSION}")
 ENDIF(USE_QT4)
 
@@ -119,7 +120,7 @@ ADD_LIBRARY (${PROJECT_NAME}
   ${${PROJECT_NAME}_RESOURCES_RCC}
   )
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${QT_LIBRARIES} hpp-manipulation-corba::hpp-manipulation-corba)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} PUBLIC ${QT_LIBRARIES} hpp-manipulation-corba::hpp-manipulation-corba)
 PKG_CONFIG_USE_DEPENDENCY(${PROJECT_NAME} qgv)
 
 INSTALL(TARGETS ${PROJECT_NAME} EXPORT ${TARGETS_EXPORT_NAME} DESTINATION lib)
