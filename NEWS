@@ -1,4 +1,7 @@
                                                                 -*- outline -*-
+New in 4.10.0
+* Update to changes in qgv and gv.
+
 New in 4.6.0
 * Catch error when HPP server are not found.
 * Better handling of CORBA connection
