@@ -33,9 +33,8 @@
 #define HPP_PLOT_HPPWIDGETSPLUGIN_HH
 
 #include <gepetto/gui/plugin-interface.hh>
-#include <hpp/plot/hpp-manipulation-graph.hh>
-
 #include <hpp/corbaserver/manipulation/client.hh>
+#include <hpp/plot/hpp-manipulation-graph.hh>
 #undef __robot_hh__
 #undef __problem_hh__
 #include <hpp/corbaserver/client.hh>
@@ -43,62 +42,62 @@
 class QDockWidget;
 
 namespace hpp {
-  namespace plot {
-    class HppMonitoringPlugin : public QObject, public gepetto::gui::PluginInterface,
-				public gepetto::gui::ConnectionInterface
-    {
-      Q_OBJECT
-      Q_INTERFACES (gepetto::gui::PluginInterface gepetto::gui::ConnectionInterface)
-#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
-      Q_PLUGIN_METADATA (IID "hpp-plot.hppmonitoringplugin")
+namespace plot {
+class HppMonitoringPlugin : public QObject,
+                            public gepetto::gui::PluginInterface,
+                            public gepetto::gui::ConnectionInterface {
+  Q_OBJECT
+  Q_INTERFACES(gepetto::gui::PluginInterface gepetto::gui::ConnectionInterface)
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+  Q_PLUGIN_METADATA(IID "hpp-plot.hppmonitoringplugin")
 #endif
 
-      public:
-        explicit HppMonitoringPlugin ();
+ public:
+  explicit HppMonitoringPlugin();
 
-        virtual ~HppMonitoringPlugin ();
+  virtual ~HppMonitoringPlugin();
 
-        // PluginInterface interface
-      public:
-        void init();
-        QString name() const;
+  // PluginInterface interface
+ public:
+  void init();
+  QString name() const;
 
-        // CorbaInterface
-      public:
-        virtual void openConnection ();
-        virtual void closeConnection();
-        virtual bool corbaException (int jobId, const CORBA::Exception &excep) const;
+  // CorbaInterface
+ public:
+  virtual void openConnection();
+  virtual void closeConnection();
+  virtual bool corbaException(int jobId, const CORBA::Exception& excep) const;
 
-        public slots:
-          void projectRandomConfigOn(hpp::ID idNode);
-          bool projectCurrentConfigOn(hpp::ID idNode);
-          void setTargetState (hpp::ID idEdge);
-          bool extendFromCurrentToCurrentConfigOn(hpp::ID idEdge);
-          bool extendFromCurrentToRandomConfigOn (hpp::ID idEdge);
-          void applyCurrentConfiguration();
-          void appliedConfigAtParam (int pid, double param);
+ public slots:
+  void projectRandomConfigOn(hpp::ID idNode);
+  bool projectCurrentConfigOn(hpp::ID idNode);
+  void setTargetState(hpp::ID idEdge);
+  bool extendFromCurrentToCurrentConfigOn(hpp::ID idEdge);
+  bool extendFromCurrentToRandomConfigOn(hpp::ID idEdge);
+  void applyCurrentConfiguration();
+  void appliedConfigAtParam(int pid, double param);
 
-    signals:
-        void projectionStatus (QString status);
+ signals:
+  void projectionStatus(QString status);
 
-      private:
-        bool projectConfigOn(hpp::floatSeq config, hpp::ID idNode);
-        bool extendConfigOn(hpp::floatSeq from, hpp::floatSeq config, hpp::ID idEdge);
+ private:
+  bool projectConfigOn(hpp::floatSeq config, hpp::ID idNode);
+  bool extendConfigOn(hpp::floatSeq from, hpp::floatSeq config, hpp::ID idEdge);
 
-        bool projectRandomConfigOn_impl(hpp::ID idNode);
+  bool projectRandomConfigOn_impl(hpp::ID idNode);
 
-        hpp::floatSeq getCurrentConfig ();
-        void setCurrentConfig (const hpp::floatSeq& q);
-        QObject* hppPlugin ();
+  hpp::floatSeq getCurrentConfig();
+  void setCurrentConfig(const hpp::floatSeq& q);
+  QObject* hppPlugin();
 
-        hpp::plot::HppManipulationGraphWidget* cgWidget_;
-        QList <QDockWidget*> docks_;
+  hpp::plot::HppManipulationGraphWidget* cgWidget_;
+  QList<QDockWidget*> docks_;
 
-        hpp::corbaServer::manipulation::Client* manip_;
-        hpp::corbaServer::Client* basic_;
-        QObject* hppPlugin_;
-    };
-  } // namespace plot
-} // namespace hpp
+  hpp::corbaServer::manipulation::Client* manip_;
+  hpp::corbaServer::Client* basic_;
+  QObject* hppPlugin_;
+};
+}  // namespace plot
+}  // namespace hpp
 
-#endif // HPP_PLOT_HPPWIDGETSPLUGIN_HH
+#endif  // HPP_PLOT_HPPWIDGETSPLUGIN_HH

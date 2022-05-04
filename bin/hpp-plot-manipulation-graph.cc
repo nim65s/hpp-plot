@@ -14,22 +14,20 @@
 // received a copy of the GNU Lesser General Public License along with
 // hpp-plot. If not, see <http://www.gnu.org/licenses/>.
 
-#include "hpp/plot/hpp-manipulation-graph.hh"
-
-#include <QDebug>
 #include <QApplication>
+#include <QDebug>
 #include <QMainWindow>
-
 #include <hpp/corbaserver/manipulation/client.hh>
 
-int main (int argc, char** argv)
-{
+#include "hpp/plot/hpp-manipulation-graph.hh"
+
+int main(int argc, char** argv) {
   QApplication a(argc, argv);
   QMainWindow window;
 
-  hpp::corbaServer::manipulation::Client client (argc,argv);
+  hpp::corbaServer::manipulation::Client client(argc, argv);
   client.connect();
-  hpp::plot::HppManipulationGraphWidget w (&client, NULL);
+  hpp::plot::HppManipulationGraphWidget w(&client, NULL);
   w.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   window.setCentralWidget(&w);
   window.show();

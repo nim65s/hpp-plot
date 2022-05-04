@@ -32,46 +32,41 @@
 #include "hppmanipulationplugin.hh"
 
 #include <hpp/manipulation/problem-solver.hh>
-
 #include <hppserverprocess.hh>
 
 using gepetto::gui::CorbaServer;
 
 namespace hpp {
-  namespace plot {
-    HppManipulationPlugin::HppManipulationPlugin() :
-      server_ (NULL)
-    {
-    }
+namespace plot {
+HppManipulationPlugin::HppManipulationPlugin() : server_(NULL) {}
 
-    HppManipulationPlugin::~HppManipulationPlugin()
-    {
-      if (server_) {
-        server_->wait();
-        delete server_;
-      }
-    }
+HppManipulationPlugin::~HppManipulationPlugin() {
+  if (server_) {
+    server_->wait();
+    delete server_;
+  }
+}
 
-    void HppManipulationPlugin::init()
-    {
-      hpp::manipulation::ProblemSolverPtr_t ps = hpp::manipulation::ProblemSolver::create ();
+void HppManipulationPlugin::init() {
+  hpp::manipulation::ProblemSolverPtr_t ps =
+      hpp::manipulation::ProblemSolver::create();
 
-      hpp::corbaServer::Server* bs = new hpp::corbaServer::Server (ps, 0, NULL, true);
-      hpp::manipulation::Server* ms = new hpp::manipulation::Server (0, NULL, true);
-      ms->setProblemSolverMap (bs->problemSolverMap());
+  hpp::corbaServer::Server* bs =
+      new hpp::corbaServer::Server(ps, 0, NULL, true);
+  hpp::manipulation::Server* ms = new hpp::manipulation::Server(0, NULL, true);
+  ms->setProblemSolverMap(bs->problemSolverMap());
 
-      server_ = new CorbaServer (new HppServerProcess (bs, ms));
-      server_->start();
-      server_->waitForInitDone();
-    }
+  server_ = new CorbaServer(new HppServerProcess(bs, ms));
+  server_->start();
+  server_->waitForInitDone();
+}
 
-    QString HppManipulationPlugin::name() const
-    {
-      return QString ("hpp-manipulation-corba plugin");
-    }
-  } // namespace plot
-} // namespace hpp
+QString HppManipulationPlugin::name() const {
+  return QString("hpp-manipulation-corba plugin");
+}
+}  // namespace plot
+}  // namespace hpp
 
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-Q_EXPORT_PLUGIN2 (hppmanipulationplugin, hpp::plot::HppManipulationPlugin)
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+Q_EXPORT_PLUGIN2(hppmanipulationplugin, hpp::plot::HppManipulationPlugin)
 #endif
