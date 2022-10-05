@@ -1,8 +1,7 @@
 # BSD 2-Clause License
 
 #
-# Copyright (c) 2015, 2018, 2020 CNRS
-# Authors: Joseph Mirabel, Guilhem Saurel
+# Copyright (c) 2015, 2018, 2020 CNRS Authors: Joseph Mirabel, Guilhem Saurel
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -26,13 +25,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-SET (${PROJECT_NAME}_SOURCES_HIST
-  hpp-plot-manipulation-graph.cc
-  )
+set(${PROJECT_NAME}_SOURCES_HIST hpp-plot-manipulation-graph.cc)
 
-ADD_EXECUTABLE(${PROJECT_NAME}-manipulation-graph
-  ${${PROJECT_NAME}_SOURCES_HIST})
+add_executable(${PROJECT_NAME}-manipulation-graph
+               ${${PROJECT_NAME}_SOURCES_HIST})
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}-manipulation-graph PUBLIC ${QT_LIBRARIES} ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME}-manipulation-graph PUBLIC ${QT_LIBRARIES}
+                                                                ${PROJECT_NAME})
 
-INSTALL(TARGETS ${PROJECT_NAME}-manipulation-graph DESTINATION bin)
+install(TARGETS ${PROJECT_NAME}-manipulation-graph DESTINATION bin)

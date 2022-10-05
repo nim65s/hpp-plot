@@ -1,8 +1,7 @@
 # BSD 2-Clause License
 
 #
-# Copyright (c) 2015, 2018, 2020 CNRS
-# Authors: Joseph Mirabel, Guilhem Saurel
+# Copyright (c) 2015, 2018, 2020 CNRS Authors: Joseph Mirabel, Guilhem Saurel
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -26,10 +25,10 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-IF (gepetto-viewer-corba_FOUND)
-  ADD_SUBDIRECTORY(hppmonitoringplugin)
-  # Disable because header <gepetto/gui/omniorb/omniorbthread.hh> no more accessible.
-  #IF (NOT HPP_MANIPULATION_CORBA_CLIENT_ONLY)
-  #  ADD_SUBDIRECTORY(hppmanipulationcorbaplugin)
-  #ENDIF (NOT HPP_MANIPULATION_CORBA_CLIENT_ONLY)
-ENDIF (gepetto-viewer-corba_FOUND)
+if(gepetto-viewer-corba_FOUND)
+  add_subdirectory(hppmonitoringplugin)
+  # Disable because header <gepetto/gui/omniorb/omniorbthread.hh> no more
+  # accessible. IF (NOT HPP_MANIPULATION_CORBA_CLIENT_ONLY)
+  # ADD_SUBDIRECTORY(hppmanipulationcorbaplugin) ENDIF (NOT
+  # HPP_MANIPULATION_CORBA_CLIENT_ONLY)
+endif(gepetto-viewer-corba_FOUND)

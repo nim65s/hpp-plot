@@ -1,8 +1,7 @@
 # BSD 2-Clause License
 
 #
-# Copyright (c) 2015, 2018, 2020 CNRS
-# Authors: Joseph Mirabel, Guilhem Saurel
+# Copyright (c) 2015, 2018, 2020 CNRS Authors: Joseph Mirabel, Guilhem Saurel
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -26,25 +25,22 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
+cmake_minimum_required(VERSION 3.1)
 
-IF(USE_QT4)
-  SET(QT "QT4")
-ELSE(USE_QT4)
-  SET(QT "")
-ENDIF(USE_QT4)
+if(USE_QT4)
+  set(QT "QT4")
+else(USE_QT4)
+  set(QT "")
+endif(USE_QT4)
 
-GEPETTO_GUI_PLUGIN(hppmonitoringplugin
+gepetto_gui_plugin(
+  hppmonitoringplugin
   ${QT}
-
   HEADERS
   hppmonitoringplugin.hh
-
   SOURCES
   hppmonitoringplugin.cc
-
   LINK_DEPENDENCIES
   ${PROJECT_NAME}
   gepetto-viewer::gepetto-viewer
-  qgv::qgvcore
-  )
+  qgv::qgvcore)
