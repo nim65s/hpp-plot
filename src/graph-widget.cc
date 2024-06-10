@@ -124,8 +124,12 @@ GraphWidget::GraphWidget(QString name, QWidget *parent)
   QHBoxLayout *hLayout = new QHBoxLayout(buttonBox_);
   hLayout->setMargin(0);
   algList_ = new QComboBox(this);
-  algList_->addItems(QStringList() << "dot" << "neato" << "fdp" << "sfdp"
-                                   << "twopi" << "circo");
+  algList_->addItems(QStringList() << "dot"
+                                   << "neato"
+                                   << "fdp"
+                                   << "sfdp"
+                                   << "twopi"
+                                   << "circo");
   // << "patchwork" << "osage");
   QPushButton *saveas = new QPushButton(QIcon::fromTheme("document-save-as"),
                                         "&Save DOT file...", buttonBox_);
