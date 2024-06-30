@@ -33,9 +33,7 @@ stdenv.mkDerivation {
     libsForQt5.wrapQtAppsHook
     pkg-config
   ];
-  buildInputs = [
-    libsForQt5.qtbase
-  ];
+  buildInputs = [ libsForQt5.qtbase ];
   propagatedBuildInputs = [
     gepetto-viewer-corba
     hpp-manipulation-corba
