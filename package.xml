@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
  <package format='2'>
  <name>hpp-plot</name>
- <version>5.0.0</version>
+ <version>5.1.0</version>
  <description>Plotting tools for HPP </description>
 
  <maintainer email='hpp@laas.fr'>Joseph Mirabel</maintainer>
