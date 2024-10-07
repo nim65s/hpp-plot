@@ -1,28 +1,17 @@
 {
   description = "Graphical utilities for constraint graphs in hpp-manipulation";
 
-  nixConfig = {
-    extra-substituters = [ "https://gepetto.cachix.org" ];
-    extra-trusted-public-keys = [ "gepetto.cachix.org-1:toswMl31VewC0jGkN6+gOelO2Yom0SOHzPwJMY2XiDY=" ];
-  };
-
   inputs = {
-    nixpkgs.url = "github:nim65s/nixpkgs/gepetto";
+    nixpkgs.url = "github:gepetto/nixpkgs";
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
     };
-    hpp-manipulation-corba = {
-      url = "github:humanoid-path-planner/hpp-manipulation-corba";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-parts.follows = "flake-parts";
-    };
   };
 
   outputs =
-    inputs@{ flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [ ];
+    inputs:
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [
         "x86_64-linux"
         "aarch64-linux"
@@ -30,20 +19,27 @@
         "x86_64-darwin"
       ];
       perSystem =
+        { pkgs, self', ... }:
         {
-          self',
-          pkgs,
-          system,
-          ...
-        }:
-        {
-          packages = {
-            inherit (pkgs) cachix;
-            default = pkgs.callPackage ./. {
-              hpp-manipulation-corba = inputs.hpp-manipulation-corba.packages.${system}.default;
-            };
-          };
           devShells.default = pkgs.mkShell { inputsFrom = [ self'.packages.default ]; };
+          packages = {
+            default = self'.packages.hpp-plot;
+            hpp-plot = pkgs.python3Packages.hpp-plot.overrideAttrs (_: {
+              src = pkgs.lib.fileset.toSource {
+                root = ./.;
+                fileset = pkgs.lib.fileset.unions [
+                  ./bin
+                  ./cmake_modules
+                  ./CMakeLists.txt
+                  ./doc
+                  ./include
+                  ./package.xml
+                  ./plugins
+                  ./src
+                ];
+              };
+            });
+          };
         };
     };
 }
