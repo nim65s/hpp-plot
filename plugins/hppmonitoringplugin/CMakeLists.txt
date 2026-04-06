@@ -28,9 +28,9 @@
 cmake_minimum_required(VERSION 3.22)
 
 if(USE_QT4)
-  set(QT "QT4")
+    set(QT "QT4")
 else(USE_QT4)
-  set(QT "")
+    set(QT "")
 endif(USE_QT4)
 
 gepetto_gui_plugin(
@@ -43,4 +43,5 @@ gepetto_gui_plugin(
   LINK_DEPENDENCIES
   ${PROJECT_NAME}
   gepetto-viewer::gepetto-viewer
-  qgv::qgvcore)
+  qgv::qgvcore
+)

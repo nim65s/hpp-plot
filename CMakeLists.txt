@@ -37,24 +37,32 @@ set(CXX_DISABLE_WERROR TRUE)
 # Check if the submodule cmake have been initialized
 set(JRL_CMAKE_MODULES "${CMAKE_CURRENT_LIST_DIR}/cmake")
 if(EXISTS "${JRL_CMAKE_MODULES}/base.cmake")
-  message(STATUS "JRL cmakemodules found in 'cmake/' git submodule")
+    message(STATUS "JRL cmakemodules found in 'cmake/' git submodule")
 else()
-  find_package(jrl-cmakemodules QUIET CONFIG)
-  if(jrl-cmakemodules_FOUND)
-    get_property(
-      JRL_CMAKE_MODULES
-      TARGET jrl-cmakemodules::jrl-cmakemodules
-      PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-    message(STATUS "JRL cmakemodules found on system at ${JRL_CMAKE_MODULES}")
-  else()
-    message(STATUS "JRL cmakemodules not found. Let's fetch it.")
-    include(FetchContent)
-    FetchContent_Declare(
-      "jrl-cmakemodules"
-      GIT_REPOSITORY "https://github.com/jrl-umi3218/jrl-cmakemodules.git")
-    FetchContent_MakeAvailable("jrl-cmakemodules")
-    FetchContent_GetProperties("jrl-cmakemodules" SOURCE_DIR JRL_CMAKE_MODULES)
-  endif()
+    find_package(jrl-cmakemodules QUIET CONFIG)
+    if(jrl-cmakemodules_FOUND)
+        get_property(
+            JRL_CMAKE_MODULES
+            TARGET jrl-cmakemodules::jrl-cmakemodules
+            PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+        )
+        message(
+            STATUS
+            "JRL cmakemodules found on system at ${JRL_CMAKE_MODULES}"
+        )
+    else()
+        message(STATUS "JRL cmakemodules not found. Let's fetch it.")
+        include(FetchContent)
+        FetchContent_Declare(
+            "jrl-cmakemodules"
+            GIT_REPOSITORY "https://github.com/jrl-umi3218/jrl-cmakemodules.git"
+        )
+        FetchContent_MakeAvailable("jrl-cmakemodules")
+        FetchContent_GetProperties(
+            "jrl-cmakemodules"
+            SOURCE_DIR JRL_CMAKE_MODULES
+        )
+    endif()
 endif()
 
 include("${JRL_CMAKE_MODULES}/hpp.cmake")
@@ -67,45 +75,43 @@ list(APPEND PKG_CONFIG_ADDITIONAL_VARIABLES qtversion cmake_plugin)
 compute_project_args(PROJECT_ARGS LANGUAGES CXX)
 project(${PROJECT_NAME} ${PROJECT_ARGS})
 
-option(USE_CORBA "Enable functionnalities requiring the corba servers of HPP"
-       OFF)
+option(
+    USE_CORBA
+    "Enable functionnalities requiring the corba servers of HPP"
+    OFF
+)
 
 if(USE_CORBA)
-  add_project_dependency("gepetto-viewer")
-  add_project_dependency("gepetto-viewer-corba")
-
+    add_project_dependency("gepetto-viewer")
+    add_project_dependency("gepetto-viewer-corba")
 endif()
 
 message(STATUS "Looking for Qt ${DESIRED_QT_VERSION_MAJOR}.")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(
-  Qt5 REQUIRED
-  COMPONENTS Core
-             Widgets
-             Gui
-             PrintSupport
-             Concurrent
-             OpenGL
-             Network
-             Xml)
+    Qt5
+    REQUIRED
+    COMPONENTS Core Widgets Gui PrintSupport Concurrent OpenGL Network Xml
+)
 foreach(
-  component
-  "Core"
-  "Widgets"
-  "Gui"
-  "PrintSupport"
-  "Concurrent"
-  OpenGL
-  Network
-  Xml)
-  list(APPEND QT_INCLUDE_DIRS ${Qt5${component}_INCLUDE_DIRS})
-  list(APPEND QT_LIBRARIES ${Qt5${component}_LIBRARIES})
+    component
+    "Core"
+    "Widgets"
+    "Gui"
+    "PrintSupport"
+    "Concurrent"
+    OpenGL
+    Network
+    Xml
+)
+    list(APPEND QT_INCLUDE_DIRS ${Qt5${component}_INCLUDE_DIRS})
+    list(APPEND QT_LIBRARIES ${Qt5${component}_LIBRARIES})
 endforeach()
 set(PKG_CONFIG_EXTRA "qtversion=${Qt5Core_VERSION}")
 
 if(USE_CORBA)
-  add_project_dependency("hpp-manipulation-corba" REQUIRED)
+    add_project_dependency("hpp-manipulation-corba" REQUIRED)
 endif()
 add_project_dependency("hpp-manipulation" REQUIRED)
 add_project_dependency("qgv" REQUIRED)
@@ -115,11 +121,15 @@ set(PYTHON_COMPONENTS Interpreter Development NumPy)
 findpython()
 search_for_boost_python()
 
-set(${PROJECT_NAME}_HEADERS include/hpp/plot/graph-widget.hh
-                            include/hpp/plot/hpp-native-graph.hh)
+set(${PROJECT_NAME}_HEADERS
+    include/hpp/plot/graph-widget.hh
+    include/hpp/plot/hpp-native-graph.hh
+)
 if(USE_CORBA)
-  set(${PROJECT_NAME}_HEADERS ${${PROJECT_NAME}_HEADERS}
-                              include/hpp/plot/hpp-manipulation-graph.hh)
+    set(${PROJECT_NAME}_HEADERS
+        ${${PROJECT_NAME}_HEADERS}
+        include/hpp/plot/hpp-manipulation-graph.hh
+    )
 endif()
 set(${PROJECT_NAME}_HEADERS_NOMOC)
 
@@ -134,48 +144,66 @@ add_definitions(${QT_DEFINITIONS})
 
 set(${PROJECT_NAME}_SOURCES src/graph-widget.cc src/hpp-native-graph.cc)
 if(USE_CORBA)
-  set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES}
-                              src/hpp-manipulation-graph.cc)
+    set(${PROJECT_NAME}_SOURCES
+        ${${PROJECT_NAME}_SOURCES}
+        src/hpp-manipulation-graph.cc
+    )
 endif()
 
 add_library(
-  ${PROJECT_NAME} SHARED
-  ${${PROJECT_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS_NOMOC}
-  ${${PROJECT_NAME}_HEADERS_MOC} ${${PROJECT_NAME}_FORMS_HEADERS}
-  ${${PROJECT_NAME}_RESOURCES_RCC})
+    ${PROJECT_NAME}
+    SHARED
+    ${${PROJECT_NAME}_SOURCES}
+    ${${PROJECT_NAME}_HEADERS_NOMOC}
+    ${${PROJECT_NAME}_HEADERS_MOC}
+    ${${PROJECT_NAME}_FORMS_HEADERS}
+    ${${PROJECT_NAME}_RESOURCES_RCC}
+)
 
 target_link_libraries(
-  ${PROJECT_NAME} PUBLIC ${QT_LIBRARIES} hpp-manipulation::hpp-manipulation
-                         hpp-manipulation::hpp-manipulation qgv::qgvcore)
+    ${PROJECT_NAME}
+    PUBLIC
+        ${QT_LIBRARIES}
+        hpp-manipulation::hpp-manipulation
+        hpp-manipulation::hpp-manipulation
+        qgv::qgvcore
+)
 if(USE_CORBA)
-  target_link_libraries(${PROJECT_NAME}
-                        PUBLIC hpp-manipulation-corba::hpp-manipulation-corba)
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PUBLIC hpp-manipulation-corba::hpp-manipulation-corba
+    )
 endif()
 
-install(
-  TARGETS ${PROJECT_NAME}
-  EXPORT ${TARGETS_EXPORT_NAME}
-  DESTINATION lib)
+install(TARGETS ${PROJECT_NAME} EXPORT ${TARGETS_EXPORT_NAME} DESTINATION lib)
 
 if(USE_CORBA)
-  add_subdirectory(bin)
-  add_subdirectory(plugins)
+    add_subdirectory(bin)
+    add_subdirectory(plugins)
 endif()
 
 # Python module for native graph viewer
 add_library(pyhpp_plot_graph_viewer MODULE src/pyhpp_plot/graph_viewer.cc)
 target_link_boost_python(pyhpp_plot_graph_viewer PUBLIC)
 target_link_libraries(
-  pyhpp_plot_graph_viewer
-  PUBLIC ${PROJECT_NAME} ${QT_LIBRARIES} hpp-manipulation::hpp-manipulation
-         ${PYTHON_LIBRARIES})
-target_include_directories(pyhpp_plot_graph_viewer
-                           PRIVATE ${PYTHON_INCLUDE_DIRS})
+    pyhpp_plot_graph_viewer
+    PUBLIC
+        ${PROJECT_NAME}
+        ${QT_LIBRARIES}
+        hpp-manipulation::hpp-manipulation
+        ${PYTHON_LIBRARIES}
+)
+target_include_directories(
+    pyhpp_plot_graph_viewer
+    PRIVATE ${PYTHON_INCLUDE_DIRS}
+)
 set_target_properties(
-  pyhpp_plot_graph_viewer
-  PROPERTIES PREFIX ""
-             OUTPUT_NAME "graph_viewer"
-             LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/pyhpp_plot")
+    pyhpp_plot_graph_viewer
+    PROPERTIES
+        PREFIX ""
+        OUTPUT_NAME "graph_viewer"
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/pyhpp_plot"
+)
 
 # pyhpp_plot_graph_viewer is a python module that spawn Qt windows. for this, at
 # runtime, it need a QT_PLUGIN_PATH env var with a path where the shared lib for
@@ -188,36 +216,39 @@ set(QT_PLUGIN_PATH_CMAKE)
 
 # First, we might need to manually discover platforms plugins which are not
 # installed in the same prefix as Qt5Gui. eg. Wayland.
-find_package(
-  Qt5 CONFIG
-  COMPONENTS WaylandClient
-  QUIET)
+find_package(Qt5 CONFIG COMPONENTS WaylandClient QUIET)
 if(Qt5WaylandClient_FOUND)
-  cmake_path(GET Qt5WaylandClient_DIR PARENT_PATH _p)
-  file(GLOB pluginTargets "${_p}/Qt5Gui/Qt5Gui_*.cmake")
-  if(pluginTargets)
-    foreach(pluginTarget ${pluginTargets})
-      include(${pluginTarget})
-    endforeach()
-  endif()
+    cmake_path(GET Qt5WaylandClient_DIR PARENT_PATH _p)
+    file(GLOB pluginTargets "${_p}/Qt5Gui/Qt5Gui_*.cmake")
+    if(pluginTargets)
+        foreach(pluginTarget ${pluginTargets})
+            include(${pluginTarget})
+        endforeach()
+    endif()
 endif()
 
 foreach(p IN LISTS Qt5Gui_PLUGINS)
-  get_target_property(_l ${p} IMPORTED_LOCATION_RELEASE)
-  cmake_path(GET _l PARENT_PATH _pp)
-  cmake_path(GET _pp PARENT_PATH _ppp)
-  if(NOT _ppp IN_LIST QT_PLUGIN_PATH_CMAKE)
-    set(QT_PLUGIN_PATH_CMAKE ${QT_PLUGIN_PATH_CMAKE} ${_ppp})
-  endif()
+    get_target_property(_l ${p} IMPORTED_LOCATION_RELEASE)
+    cmake_path(GET _l PARENT_PATH _pp)
+    cmake_path(GET _pp PARENT_PATH _ppp)
+    if(NOT _ppp IN_LIST QT_PLUGIN_PATH_CMAKE)
+        set(QT_PLUGIN_PATH_CMAKE ${QT_PLUGIN_PATH_CMAKE} ${_ppp})
+    endif()
 endforeach()
 
 add_compile_definitions(
-  "QT_PLUGIN_PATH_CMAKE=\"$<JOIN:${QT_PLUGIN_PATH_CMAKE},:>\"")
+    "QT_PLUGIN_PATH_CMAKE=\"$<JOIN:${QT_PLUGIN_PATH_CMAKE},:>\""
+)
 
-install(TARGETS pyhpp_plot_graph_viewer
-        DESTINATION "${PYTHON_SITELIB}/pyhpp_plot")
+install(
+    TARGETS pyhpp_plot_graph_viewer
+    DESTINATION "${PYTHON_SITELIB}/pyhpp_plot"
+)
 
 # Install Python modules
-install(FILES "${CMAKE_SOURCE_DIR}/src/pyhpp_plot/__init__.py"
-              "${CMAKE_SOURCE_DIR}/src/pyhpp_plot/interactive_viewer.py"
-        DESTINATION "${PYTHON_SITELIB}/pyhpp_plot")
+install(
+    FILES
+        "${CMAKE_SOURCE_DIR}/src/pyhpp_plot/__init__.py"
+        "${CMAKE_SOURCE_DIR}/src/pyhpp_plot/interactive_viewer.py"
+    DESTINATION "${PYTHON_SITELIB}/pyhpp_plot"
+)
