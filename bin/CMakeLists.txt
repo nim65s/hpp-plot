@@ -27,10 +27,14 @@
 
 set(${PROJECT_NAME}_SOURCES_HIST hpp-plot-manipulation-graph.cc)
 
-add_executable(${PROJECT_NAME}-manipulation-graph
-               ${${PROJECT_NAME}_SOURCES_HIST})
+add_executable(
+    ${PROJECT_NAME}-manipulation-graph
+    ${${PROJECT_NAME}_SOURCES_HIST}
+)
 
-target_link_libraries(${PROJECT_NAME}-manipulation-graph PUBLIC ${QT_LIBRARIES}
-                                                                ${PROJECT_NAME})
+target_link_libraries(
+    ${PROJECT_NAME}-manipulation-graph
+    PUBLIC ${QT_LIBRARIES} ${PROJECT_NAME}
+)
 
 install(TARGETS ${PROJECT_NAME}-manipulation-graph DESTINATION bin)

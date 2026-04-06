@@ -26,9 +26,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 if(gepetto-viewer-corba_FOUND)
-  add_subdirectory(hppmonitoringplugin)
-  # Disable because header <gepetto/gui/omniorb/omniorbthread.hh> no more
-  # accessible. IF (NOT HPP_MANIPULATION_CORBA_CLIENT_ONLY)
-  # ADD_SUBDIRECTORY(hppmanipulationcorbaplugin) ENDIF (NOT
-  # HPP_MANIPULATION_CORBA_CLIENT_ONLY)
+    add_subdirectory(hppmonitoringplugin)
+    # Disable because header <gepetto/gui/omniorb/omniorbthread.hh> no more
+    # accessible. IF (NOT HPP_MANIPULATION_CORBA_CLIENT_ONLY)
+    # ADD_SUBDIRECTORY(hppmanipulationcorbaplugin) ENDIF (NOT
+    # HPP_MANIPULATION_CORBA_CLIENT_ONLY)
 endif(gepetto-viewer-corba_FOUND)
