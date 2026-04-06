@@ -17,6 +17,7 @@
           inputs.gepetto.flakeModule
           {
             flakoboros.overrideAttrs.hpp-plot = _: {
+              patches = [ ];
               src = lib.fileset.toSource {
                 root = ./.;
                 fileset = lib.fileset.unions [
