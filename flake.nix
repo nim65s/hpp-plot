@@ -9,7 +9,6 @@
       { lib, ... }:
       {
         overrideAttrs.hpp-plot = {
-          patches = [ ];
           src = lib.fileset.toSource {
             root = ./.;
             fileset = lib.fileset.unions [
