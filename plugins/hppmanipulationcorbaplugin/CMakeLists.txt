@@ -25,12 +25,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.22)
 
 if(USE_QT4)
-  set(QT "QT4")
+    set(QT "QT4")
 else(USE_QT4)
-  set(QT "")
+    set(QT "")
 endif(USE_QT4)
 
 gepetto_gui_plugin(
@@ -43,4 +43,5 @@ gepetto_gui_plugin(
   hppmanipulationplugin.cc
   hppserverprocess.cc
   LINK_DEPENDENCIES
-  "hpp-manipulation-corba::hpp-manipulation-corba")
+  "hpp-manipulation-corba::hpp-manipulation-corba"
+)

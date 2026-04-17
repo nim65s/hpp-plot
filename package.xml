@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>hpp-plot</name>
-  <version>7.0.0</version>
+  <version>8.0.0</version>
   <description>Plotting tools for HPP </description>
 
   <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
@@ -21,9 +21,7 @@
 
   <build_depend>doxygen</build_depend>
 
-  <depend>gepetto-viewer</depend>
-  <depend>gepetto-viewer-corba</depend>
-  <depend>hpp-manipulation-corba</depend>
+  <depend>hpp-manipulation</depend>
   <!-- Required by CMake, but not available in rosdep -->
   <!-- <depend>qgv</depend> -->
 
