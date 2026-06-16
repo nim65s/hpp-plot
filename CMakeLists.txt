@@ -248,6 +248,13 @@ if(USE_QT)
         TARGETS pyhpp_plot_graph_viewer
         DESTINATION "${PYTHON_SITELIB}/pyhpp_plot"
     )
+else()
+    add_library(${PROJECT_NAME} INTERFACE)
+    install(
+        TARGETS ${PROJECT_NAME}
+        EXPORT ${TARGETS_EXPORT_NAME}
+        DESTINATION lib
+    )
 endif()
 
 # Install Python modules
