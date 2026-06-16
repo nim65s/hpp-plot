@@ -12,9 +12,14 @@
   <url type="repository">https://github.com/humanoid-path-planner/hpp-plot</url>
   <url type="bugtracker">https://github.com/humanoid-path-planner/hpp-plot/issues</url>
 
+  <depend>python3</depend>
+  <depend>python3-dev</depend>
+  <depend>python3-numpy</depend>
+
   <buildtool_depend>cmake</buildtool_depend>
   <build_depend>doxygen</build_depend>
   <build_depend>jrl_cmakemodules</build_depend>
+  <build_depend>npm</build_depend>
 
   <export>
     <build_type>cmake</build_type>

@@ -80,7 +80,12 @@ option(
 option(USE_JS "Run npm install and build from cmake" ON)
 option(USE_QT "Start Qt window" OFF)
 
+# Python bindings for native graph viewer
+set(PYTHON_COMPONENTS Interpreter Development NumPy)
+findpython()
+
 if(USE_QT)
+    search_for_boost_python()
     if(USE_CORBA)
         add_project_dependency("gepetto-viewer")
         add_project_dependency("gepetto-viewer-corba")
@@ -115,11 +120,6 @@ if(USE_QT)
     endif()
     add_project_dependency("hpp-manipulation" REQUIRED)
     add_project_dependency("qgv" REQUIRED)
-
-    # Python bindings for native graph viewer
-    set(PYTHON_COMPONENTS Interpreter Development NumPy)
-    findpython()
-    search_for_boost_python()
 
     set(${PROJECT_NAME}_HEADERS
         include/hpp/plot/graph-widget.hh
