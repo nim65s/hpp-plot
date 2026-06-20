@@ -1,29 +1,25 @@
-<?xml version="1.0"?>
-<package format="3">
-  <name>hpp-plot</name>
+<?xml version='1.0'?>
+<package format='3'>
+  <name>hpp_plot</name>
   <version>8.0.0</version>
-  <description>Plotting tools for HPP </description>
-
-  <maintainer email="guilhem.saurel@laas.fr">Guilhem Saurel</maintainer>
-
+  <description>Plotting tools for HPP</description>
   <author>Joseph Mirabel</author>
-  <author>Florent Lamiraux et al.</author>
-
-  <license>BSD-2</license>
+  <author>Florent Lamiraux</author>
+  <maintainer email='guilhem.saurel@laas.fr'>Guilhem Saurel</maintainer>
+  <license>BSD-2-Clause</license>
 
   <url type="website">https://github.com/humanoid-path-planner/hpp-plot</url>
   <url type="repository">https://github.com/humanoid-path-planner/hpp-plot</url>
   <url type="bugtracker">https://github.com/humanoid-path-planner/hpp-plot/issues</url>
 
-  <buildtool_depend condition="$ROS_VERSION == 1">catkin</buildtool_depend>
-  <buildtool_depend condition="$ROS_VERSION == 2">ament_cmake</buildtool_depend>
+  <depend>python3</depend>
+  <depend>python3-dev</depend>
+  <depend>python3-numpy</depend>
+
   <buildtool_depend>cmake</buildtool_depend>
-
   <build_depend>doxygen</build_depend>
-
-  <depend>hpp-manipulation</depend>
-  <!-- Required by CMake, but not available in rosdep -->
-  <!-- <depend>qgv</depend> -->
+  <build_depend>jrl_cmakemodules</build_depend>
+  <build_depend>npm</build_depend>
 
   <export>
     <build_type>cmake</build_type>
