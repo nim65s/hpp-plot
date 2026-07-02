@@ -1,0 +1,3 @@
+[hpp-plot]
+apt_deps = ["npm", "python3-numpy"]
+url = "."
