@@ -47,7 +47,7 @@
             npmDeps = pkgs-final.fetchNpmDeps {
               name = "${drv-final.pname}-${drv-final.version}-npm-deps";
               src = drv-final.src + "/src/web_app/";
-              hash = "sha256-B8s+hhTn7CG3q8bx490SM8fKFAEGOmHX7u8JN/7qI94=";
+              hash = "sha256-GAYdugZFMygk0MXyXxf2wSsWRvn/aW4YeFH2v62IZjI=";
             };
             preBuild = ''
               cd ../src/web_app
