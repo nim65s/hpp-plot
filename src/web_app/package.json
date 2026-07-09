@@ -1,7 +1,8 @@
 {
   "name": "cytoscape-hpp-plot",
-  "private": true,
-  "version": "0.1.0",
+  "version": "9.0.0",
+  "description": "Plotting tools for HPP with cytoscape",
+  "license": "BSD-2-Clause",
   "type": "module",
   "scripts": {
     "dev": "vite",

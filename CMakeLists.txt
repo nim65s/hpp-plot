@@ -271,19 +271,44 @@ install(
 
 # appWeb
 if(USE_JS)
-    find_program(NPM_EXECUTABLE npm REQUIRED)
+    find_program(NPM_EXECUTABLE npm)
 
-    set(REACT_APP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/web_app)
-    set(REACT_DIST_DIR ${REACT_APP_DIR}/dist)
+    if(NPM_EXECUTABLE)
+        set(REACT_APP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/web_app)
+        set(REACT_DIST_DIR ${REACT_APP_DIR}/dist)
 
-    add_custom_target(
-        web_app_hpp_plot_build
-        ALL
-        COMMAND ${NPM_EXECUTABLE} install
-        COMMAND ${NPM_EXECUTABLE} run build
-        WORKING_DIRECTORY ${REACT_APP_DIR}
-        COMMENT "Building React app"
-    )
-
-    install(DIRECTORY "${REACT_DIST_DIR}/" DESTINATION "share/hpp-plot/webapp")
+        # TODO: build that is build dir and not src
+        add_custom_target(
+            web_app_hpp_plot_build
+            ALL
+            COMMAND ${NPM_EXECUTABLE} install
+            COMMAND ${NPM_EXECUTABLE} run build
+            WORKING_DIRECTORY ${REACT_APP_DIR}
+            COMMENT "Building React app"
+        )
+        install(
+            DIRECTORY "${REACT_DIST_DIR}/"
+            DESTINATION "share/hpp-plot/webapp"
+        )
+    else()
+        # tar -c --xz -C src/web_app/dist -f webapp.tar.xz .
+        message(
+            WARNING
+            "npm was not found, using prebuild webapp, might not be up-to-date"
+        )
+        include(FetchContent)
+        FetchContent_Declare(
+            webapp
+            URL
+                "https://github.com/humanoid-path-planner/hpp-plot/releases/download/v9.0.0/webapp.tar.xz"
+            URL_HASH
+                "SHA256=deb49dbb5d3f1b9f725f424f99de878cb6ffdb3f289c57dc5a14838afaef33c0"
+            DOWNLOAD_EXTRACT_TIMESTAMP ON
+        )
+        FetchContent_MakeAvailable(webapp)
+        install(
+            DIRECTORY "${webapp_SOURCE_DIR}/"
+            DESTINATION "share/hpp-plot/webapp"
+        )
+    endif()
 endif()
